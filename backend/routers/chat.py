@@ -11,13 +11,13 @@ from datetime import datetime
 from sqlmodel import Session
 import json
 
-from backend.database import get_session
-from backend.core.security import verify_token
-from backend.repositories.conversation_repository import ConversationRepository
-from backend.services.agent_service import AgentService
-from backend.services.tool_handler import ToolHandler
-from backend.services.context_manager import ContextManager
-from backend.models.conversation import MessageRole
+from database import get_session
+from core.security import verify_token
+from repositories.conversation_repository import ConversationRepository
+from services.agent_service import AgentService
+from services.tool_handler import ToolHandler
+from services.context_manager import ContextManager
+from models.conversation import MessageRole
 
 import logging
 
