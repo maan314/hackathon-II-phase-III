@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 17, 17, 17;
+  --background-end-rgb: 0, 0, 0;
+  --card-bg-start-rgb: 30, 30, 30;
+  --card-bg-end-rgb: 20, 20, 20;
+  --border-color-rgb: 64, 64, 64;
+  --neon-cyan: 0, 255, 255;
+  --neon-purple: 128, 0, 255;
+  --neon-pink: 255, 0, 255;
+  --neon-green: 0, 255, 128;
+}
+
+.light {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 240, 249, 255;
+  --background-end-rgb: 255, 255, 255;
+  --card-bg-start-rgb: 255, 255, 255;
+  --card-bg-end-rgb: 245, 245, 247;
+  --border-color-rgb: 200, 200, 200;
+  --neon-cyan: 0, 150, 200;
+  --neon-purple: 100, 0, 200;
+  --neon-pink: 200, 0, 150;
+  --neon-green: 0, 180, 100;
+}
+
+/* Apply theme variables to all elements */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      rgb(var(--background-start-rgb)),
+      rgb(var(--background-end-rgb))
+    );
+  min-height: 100vh;
+  transition: all 0.3s ease;
+}
+
+.dark body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      rgb(var(--background-start-rgb)),
+      rgb(var(--background-end-rgb))
+    );
+}
+
+.light body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      rgb(var(--background-start-rgb)),
+      rgb(var(--background-end-rgb))
+    );
+}
+
+/* Neon glow effects */
+.neon-glow-cyan {
+  box-shadow: 0 0 5px rgba(var(--neon-cyan), 0.3),
+              0 0 10px rgba(var(--neon-cyan), 0.2),
+              0 0 15px rgba(var(--neon-cyan), 0.1);
+}
+
+.neon-glow-purple {
+  box-shadow: 0 0 5px rgba(var(--neon-purple), 0.3),
+              0 0 10px rgba(var(--neon-purple), 0.2),
+              0 0 15px rgba(var(--neon-purple), 0.1);
+}
+
+.neon-glow-pink {
+  box-shadow: 0 0 5px rgba(var(--neon-pink), 0.3),
+              0 0 10px rgba(var(--neon-pink), 0.2),
+              0 0 15px rgba(var(--neon-pink), 0.1);
+}
+
+.neon-glow-green {
+  box-shadow: 0 0 5px rgba(var(--neon-green), 0.3),
+              0 0 10px rgba(var(--neon-green), 0.2),
+              0 0 15px rgba(var(--neon-green), 0.1);
+}
+
+/* Hover neon effects */
+.hover-neon-cyan:hover {
+  box-shadow: 0 0 8px rgba(var(--neon-cyan), 0.5),
+              0 0 16px rgba(var(--neon-cyan), 0.3),
+              0 0 24px rgba(var(--neon-cyan), 0.2);
+}
+
+.hover-neon-purple:hover {
+  box-shadow: 0 0 8px rgba(var(--neon-purple), 0.5),
+              0 0 16px rgba(var(--neon-purple), 0.3),
+              0 0 24px rgba(var(--neon-purple), 0.2);
+}
+
+.hover-neon-pink:hover {
+  box-shadow: 0 0 8px rgba(var(--neon-pink), 0.5),
+              0 0 16px rgba(var(--neon-pink), 0.3),
+              0 0 24px rgba(var(--neon-pink), 0.2);
+}
+
+.hover-neon-green:hover {
+  box-shadow: 0 0 8px rgba(var(--neon-green), 0.5),
+              0 0 16px rgba(var(--neon-green), 0.3),
+              0 0 24px rgba(var(--neon-green), 0.2);
+}
