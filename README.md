@@ -17,7 +17,6 @@ start-backend.bat    # Windows
 
 This starts:
 - Main API Server on port 8000
-- MCP Server on port 8001
 
 ### Start Frontend Server
 ```bash
@@ -31,8 +30,6 @@ This starts the Next.js frontend on port 3000.
 ### Access Points
 - **Frontend:** http://localhost:3000
 - **Backend API:** http://localhost:8001 (configured in frontend/.env.local)
-- **MCP Server:** http://localhost:8001 (integrated)
-
 ---
 
 ## ⚠️ IMPORTANT: Configuration
