@@ -243,7 +243,7 @@ Open browser: http://localhost:3000
 DATABASE_URL=postgresql://...
 
 # Cohere (Already configured)
-COHERE_API_KEY=NKrMXVjviqLyR3ZL5ljw9eKTHW7vwvSvnkUrOtPi
+COHERE_API_KEY= ""
 
 # AI Agent Configuration
 AGENT_MODEL=command-r-08-2024
