@@ -7,12 +7,14 @@ from typing import Dict, Any, Optional
 from datetime import datetime
 from sqlmodel import Session
 import logging
+from fastapi import HTTPException
 
-from backend.db.crud.tasks import (
+from db.crud.tasks import (
     create_task,
     list_tasks,
     update_task,
     complete_task,
+    reopen_task,
     delete_task,
     get_task
 )
@@ -68,6 +70,8 @@ class ToolHandler:
                 result = await self._handle_update_task(arguments, user_id)
             elif tool_name == "complete_task":
                 result = await self._handle_complete_task(arguments, user_id)
+            elif tool_name == "reopen_task":
+                result = await self._handle_reopen_task(arguments, user_id)
             elif tool_name == "delete_task":
                 result = await self._handle_delete_task(arguments, user_id)
             else:
@@ -115,7 +119,7 @@ class ToolHandler:
             "task_id": task.id,
             "title": task.title,
             "description": task.description,
-            "status": task.status.value,
+            "status": task.status.value if hasattr(task.status, 'value') else str(task.status),
             "due_date": task.due_date.isoformat() if task.due_date else None,
             "created_at": task.created_at.isoformat()
         }
@@ -138,7 +142,7 @@ class ToolHandler:
                     "task_id": task.id,
                     "title": task.title,
                     "description": task.description,
-                    "status": task.status.value,
+                    "status": task.status.value if hasattr(task.status, 'value') else str(task.status),
                     "due_date": task.due_date.isoformat() if task.due_date else None,
                     "created_at": task.created_at.isoformat()
                 }
@@ -181,20 +185,47 @@ class ToolHandler:
 
     async def _handle_complete_task(self, arguments: Dict[str, Any], user_id: str) -> Dict[str, Any]:
         """Handle complete_task tool invocation."""
-        task_id = int(arguments.get("task_id"))
+        try:
+            task_id = int(arguments.get("task_id"))
 
-        # Call existing CRUD operation
-        task = complete_task(
-            session=self.session,
-            task_id=task_id,
-            user_id=user_id
-        )
+            # Call existing CRUD operation
+            task = complete_task(
+                session=self.session,
+                task_id=task_id,
+                user_id=user_id
+            )
 
-        return {
-            "task_id": task.id,
-            "status": task.status.value,
-            "message": "Task marked as completed"
-        }
+            return {
+                "task_id": task.id,
+                "status": task.status.value if hasattr(task.status, 'value') else str(task.status),
+                "message": "Task marked as completed"
+            }
+        except HTTPException as e:
+            raise Exception(f"Task not found or access denied: {e.detail}")
+        except Exception as e:
+            raise Exception(f"Failed to complete task: {str(e)}")
+
+    async def _handle_reopen_task(self, arguments: Dict[str, Any], user_id: str) -> Dict[str, Any]:
+        """Handle reopen_task tool invocation."""
+        try:
+            task_id = int(arguments.get("task_id"))
+
+            # Call existing CRUD operation
+            task = reopen_task(
+                session=self.session,
+                task_id=task_id,
+                user_id=user_id
+            )
+
+            return {
+                "task_id": task.id,
+                "status": task.status.value if hasattr(task.status, 'value') else str(task.status),
+                "message": "Task marked as incomplete/pending"
+            }
+        except HTTPException as e:
+            raise Exception(f"Task not found or access denied: {e.detail}")
+        except Exception as e:
+            raise Exception(f"Failed to reopen task: {str(e)}")
 
     async def _handle_delete_task(self, arguments: Dict[str, Any], user_id: str) -> Dict[str, Any]:
         """Handle delete_task tool invocation."""

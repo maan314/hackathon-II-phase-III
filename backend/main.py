@@ -8,12 +8,15 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import PlainTextResponse
 from api.auth import router as auth_router
 from api.todos import router as todos_router
+from routers.chat import router as chat_router
 from database import engine
-from models import User, Todo
+from models import User
+from models.conversation import Conversation, Message
+from db.models import Task
 from sqlmodel import SQLModel
 import traceback
 
-app = FastAPI(title="Todo API", version="1.0.0")
+app = FastAPI(title="Todo API with AI Chat Agent", version="1.0.0")
 
 # Add CORS middleware
 app.add_middleware(
@@ -21,7 +24,11 @@ app.add_middleware(
     allow_origins=[
         "https://hackathon-ii-phase-ii-todo.vercel.app",
         "http://localhost:3000",
-        "http://127.0.0.1:3000"
+        "http://localhost:3001",
+        "http://localhost:3002",
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:3001",
+        "http://127.0.0.1:3002"
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -31,6 +38,7 @@ app.add_middleware(
 # Include API routers
 app.include_router(auth_router)
 app.include_router(todos_router)
+app.include_router(chat_router)  # AI Chat Agent routes
 
 @app.on_event("startup")
 def on_startup():
@@ -64,4 +72,4 @@ def health_check():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8001)

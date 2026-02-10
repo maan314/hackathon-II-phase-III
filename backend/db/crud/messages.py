@@ -200,9 +200,9 @@ def delete_message(
 
 def format_messages_for_agent(messages: List[Message]) -> List[dict]:
     """
-    Format messages for OpenAI Agent context.
+    Format messages for Cohere Agent context.
 
-    Converts Message models to the format expected by OpenAI Agents SDK:
+    Converts Message models to the format expected by Cohere API:
     [{"role": "user", "content": "..."}, {"role": "assistant", "content": "..."}]
 
     Args:

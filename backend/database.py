@@ -32,8 +32,22 @@ if DATABASE_URL.startswith("postgresql"):
             parsed_url.params, new_query, parsed_url.fragment
         ))
     
-    # PostgreSQL connection
-    engine = create_engine(DATABASE_URL, echo=True)
+    # PostgreSQL connection with connection pooling and retry logic
+    engine = create_engine(
+        DATABASE_URL,
+        echo=True,
+        pool_pre_ping=True,  # Test connections before using them
+        pool_size=5,  # Number of connections to maintain
+        max_overflow=10,  # Additional connections when pool is full
+        pool_recycle=3600,  # Recycle connections after 1 hour
+        connect_args={
+            "connect_timeout": 10,  # Connection timeout in seconds
+            "keepalives": 1,
+            "keepalives_idle": 30,
+            "keepalives_interval": 10,
+            "keepalives_count": 5,
+        }
+    )
 else:
     # SQLite connection
     connect_args = {"check_same_thread": False}

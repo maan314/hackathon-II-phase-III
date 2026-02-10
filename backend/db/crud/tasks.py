@@ -15,7 +15,7 @@ from datetime import datetime
 from typing import List, Optional
 from fastapi import HTTPException
 
-from backend.db.models import Task, TaskStatus
+from db.models import Task, TaskStatus
 
 
 def create_task(
@@ -242,6 +242,43 @@ def complete_task(session: Session, task_id: int, user_id: str) -> Task:
 
     # Update status to completed
     task.status = TaskStatus.COMPLETED
+    # updated_at will be automatically updated by database trigger
+
+    session.add(task)
+    session.commit()
+    session.refresh(task)
+
+    return task
+
+
+def reopen_task(session: Session, task_id: int, user_id: str) -> Task:
+    """
+    Mark a completed task as pending (reopen/uncomplete it).
+
+    User Isolation:
+    - Verifies user owns the task before reopening
+    - Prevents users from reopening other users' tasks
+
+    Idempotent:
+    - Reopening an already pending task is safe
+    - Returns the task in pending state
+
+    Args:
+        session: Database session
+        task_id: Task identifier
+        user_id: User identifier (enforces user isolation)
+
+    Returns:
+        Task: Reopened task (status = PENDING)
+
+    Raises:
+        HTTPException: 404 if task not found or user doesn't have access
+    """
+    # Get task with user isolation check
+    task = get_task(session, task_id, user_id)
+
+    # Update status to pending
+    task.status = TaskStatus.PENDING
     # updated_at will be automatically updated by database trigger
 
     session.add(task)

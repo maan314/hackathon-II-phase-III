@@ -279,7 +279,7 @@ Content-Type: application/json
 }
 ```
 
-2. **OpenAI API error:**
+2. **Cohere API error:**
 ```json
 {
   "error": "Internal Server Error",

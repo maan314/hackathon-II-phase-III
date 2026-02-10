@@ -1,11 +1,11 @@
 """
-OpenAI Agent configuration for AI Chat Agent system.
+Cohere Agent configuration for AI Chat Agent system.
 
-Configures Agent with system prompt and Runner for deterministic execution.
+Configures Agent with system prompt for deterministic execution.
 Stateless design - agent recreated per request with conversation history.
 """
 
-from openai import OpenAI
+import cohere
 import logging
 from typing import List, Dict
 
@@ -15,18 +15,18 @@ from backend.agent.prompts import SYSTEM_PROMPT
 logger = logging.getLogger(__name__)
 
 
-# Initialize OpenAI client
+# Initialize Cohere client
 # API key loaded from environment variable
-client = OpenAI(api_key=Config.OPENAI_API_KEY)
+client = cohere.Client(api_key=Config.COHERE_API_KEY)
 
 
-def create_agent_messages(conversation_history: List[Dict[str, str]], user_message: str) -> List[Dict[str, str]]:
+def create_agent_messages(conversation_history: List[Dict[str, str]], user_message: str) -> tuple:
     """
-    Create messages array for OpenAI Chat Completions API.
+    Create chat history and message for Cohere Chat API.
 
     Stateless Design:
     - Conversation history reconstructed from database per request
-    - System prompt prepended to conversation
+    - System prompt used as preamble
     - No in-memory conversation state
 
     Args:
@@ -34,19 +34,18 @@ def create_agent_messages(conversation_history: List[Dict[str, str]], user_messa
         user_message: New user message
 
     Returns:
-        List[Dict]: Messages formatted for OpenAI API
+        tuple: (chat_history, user_message) formatted for Cohere API
     """
-    messages = [
-        {"role": "system", "content": SYSTEM_PROMPT}
-    ]
+    # Convert to Cohere chat_history format
+    chat_history = []
+    for msg in conversation_history:
+        role = "USER" if msg["role"] == "user" else "CHATBOT"
+        chat_history.append({
+            "role": role,
+            "message": msg["content"]
+        })
 
-    # Add conversation history
-    messages.extend(conversation_history)
-
-    # Add new user message
-    messages.append({"role": "user", "content": user_message})
-
-    return messages
+    return chat_history, user_message
 
 
 def run_agent(conversation_history: List[Dict[str, str]], user_message: str) -> Dict:
@@ -56,7 +55,7 @@ def run_agent(conversation_history: List[Dict[str, str]], user_message: str) -> 
     Stateless Design:
     - Agent recreated per request (no persistent agent instance)
     - Full conversation history provided for context
-    - Deterministic execution via OpenAI Chat Completions
+    - Deterministic execution via Cohere Chat API
 
     Tool Execution:
     - Agent determines which tools to call based on user message
@@ -84,33 +83,32 @@ def run_agent(conversation_history: List[Dict[str, str]], user_message: str) -> 
             }
 
     Raises:
-        Exception: OpenAI API errors, timeout errors
+        Exception: Cohere API errors, timeout errors
     """
     try:
-        # Create messages array with system prompt and history
-        messages = create_agent_messages(conversation_history, user_message)
+        # Create chat history with conversation context
+        chat_history, message = create_agent_messages(conversation_history, user_message)
 
-        # Call OpenAI Chat Completions API
-        # Note: For hackathon scope, using direct API calls
-        # In production, would use OpenAI Agents SDK with proper tool registration
-        response = client.chat.completions.create(
-            model="gpt-4",
-            messages=messages,
+        # Call Cohere Chat API
+        response = client.chat(
+            model=Config.AGENT_MODEL if hasattr(Config, 'AGENT_MODEL') else "command-r-08-2024",
+            message=message,
+            chat_history=chat_history,
+            preamble=SYSTEM_PROMPT,
             temperature=0.7,
-            max_tokens=1000,
-            timeout=Config.API_TIMEOUT
+            max_tokens=1000
         )
 
         # Extract assistant message
-        assistant_message = response.choices[0].message.content
+        assistant_message = response.text
 
         # Extract tool calls if present
         tool_calls = []
-        if hasattr(response.choices[0].message, 'tool_calls') and response.choices[0].message.tool_calls:
-            for tool_call in response.choices[0].message.tool_calls:
+        if hasattr(response, 'tool_calls') and response.tool_calls:
+            for tool_call in response.tool_calls:
                 tool_calls.append({
-                    "tool_name": tool_call.function.name,
-                    "parameters": tool_call.function.arguments,
+                    "tool_name": tool_call.name,
+                    "parameters": tool_call.parameters,
                     "result": None,  # Would be populated after tool execution
                     "status": "pending",
                     "error": None,
@@ -135,41 +133,41 @@ def run_agent_with_tools(
     """
     Execute agent with tool definitions for function calling.
 
-    This version includes tool definitions for OpenAI function calling.
+    This version includes tool definitions for Cohere tool calling.
     Agent can invoke tools and receive results.
 
     Args:
         conversation_history: Previous messages from database
         user_message: New user message
-        tools: Tool definitions for function calling
+        tools: Tool definitions for function calling (Cohere format)
 
     Returns:
         Dict: Agent response with message and executed tool_calls
     """
     try:
-        messages = create_agent_messages(conversation_history, user_message)
+        chat_history, message = create_agent_messages(conversation_history, user_message)
 
-        # Call OpenAI with function calling
-        response = client.chat.completions.create(
-            model="gpt-4",
-            messages=messages,
+        # Call Cohere with tool calling
+        response = client.chat(
+            model=Config.AGENT_MODEL if hasattr(Config, 'AGENT_MODEL') else "command-r-08-2024",
+            message=message,
+            chat_history=chat_history,
+            preamble=SYSTEM_PROMPT,
             tools=tools,
-            tool_choice="auto",
             temperature=0.7,
-            max_tokens=1000,
-            timeout=Config.API_TIMEOUT
+            max_tokens=1000
         )
 
-        assistant_message = response.choices[0].message.content or ""
+        assistant_message = response.text or ""
         tool_calls = []
 
         # Process tool calls if present
-        if hasattr(response.choices[0].message, 'tool_calls') and response.choices[0].message.tool_calls:
-            for tool_call in response.choices[0].message.tool_calls:
+        if hasattr(response, 'tool_calls') and response.tool_calls:
+            for tool_call in response.tool_calls:
                 tool_calls.append({
-                    "id": tool_call.id,
-                    "tool_name": tool_call.function.name,
-                    "parameters": tool_call.function.arguments,
+                    "id": getattr(tool_call, 'id', None),
+                    "tool_name": tool_call.name,
+                    "parameters": tool_call.parameters,
                     "result": None,
                     "status": "pending",
                     "error": None,
@@ -179,7 +177,7 @@ def run_agent_with_tools(
         return {
             "message": assistant_message,
             "tool_calls": tool_calls,
-            "finish_reason": response.choices[0].finish_reason
+            "finish_reason": getattr(response, 'finish_reason', 'COMPLETE')
         }
 
     except Exception as e:

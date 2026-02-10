@@ -1,6 +1,6 @@
 # AI Chat Agent Backend
 
-Stateless AI-powered chat backend for task management using OpenAI Agents SDK.
+Stateless AI-powered chat backend for task management using Cohere API.
 
 ## Architecture
 
@@ -21,7 +21,7 @@ Stateless AI-powered chat backend for task management using OpenAI Agents SDK.
 
 - Python 3.11+
 - Neon PostgreSQL database
-- OpenAI API key
+- Cohere API key
 
 ### 2. Setup
 
@@ -38,7 +38,7 @@ cp .env.example .env
 
 # Edit .env with your credentials
 # - DATABASE_URL: Your Neon PostgreSQL connection string
-# - OPENAI_API_KEY: Your OpenAI API key
+# - COHERE_API_KEY: Your Cohere API key
 ```
 
 ### 3. Database Migration
@@ -97,7 +97,7 @@ backend/
 │       └── messages.py          # Message CRUD operations
 ├── agent/
 │   ├── prompts.py               # System prompt definitions
-│   ├── agent.py                 # OpenAI Agent configuration
+│   ├── agent.py                 # Cohere Agent configuration
 │   └── logging.py               # Tool call logging
 └── api/
     └── chat.py                  # Chat endpoint implementation

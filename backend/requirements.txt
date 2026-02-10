@@ -11,7 +11,7 @@ psycopg2-binary>=2.9.9
 asyncpg==0.29.0
 
 # AI Chat Agent dependencies
-openai>=1.10.0
+cohere>=5.0.0
 alembic>=1.13.0
 
 # MCP Server dependencies

@@ -30,24 +30,17 @@ if not exist ".env" (
 )
 
 echo.
-echo Starting Main API Server on port 8000...
+echo Starting Main API Server (with integrated MCP) on port 8001...
 echo.
-start "Backend API (Port 8000)" cmd /k "cd /d %~dp0 && venv\Scripts\activate.bat && python -m uvicorn main:app --reload --port 8000"
-
-timeout /t 3 /nobreak >nul
-
-echo.
-echo Starting MCP Server on port 8001...
-echo.
-start "MCP Server (Port 8001)" cmd /k "cd /d %~dp0 && venv\Scripts\activate.bat && python -m uvicorn mcp.server:app --reload --port 8001"
+start "Backend API (Port 8001)" cmd /k "cd /d %~dp0 && venv\Scripts\activate.bat && python -m uvicorn main:app --reload --port 8001"
 
 echo.
 echo ========================================
-echo Backend servers are starting...
+echo Backend server is starting...
 echo ========================================
 echo.
-echo Main API: http://localhost:8000
-echo MCP Server: http://localhost:8001
+echo Main API: http://localhost:8001
+echo (MCP tools are integrated into the main API)
 echo.
 echo Check the opened terminal windows for logs
 echo Press any key to exit this window...

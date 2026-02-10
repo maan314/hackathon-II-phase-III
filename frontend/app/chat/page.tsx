@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '@/lib/auth-context';
+import { useActivity } from '@/lib/activity-context';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,6 +22,7 @@ interface Message {
 
 export default function ChatPage() {
   const { user, isLoading } = useAuth();
+  const { logActivity } = useActivity();
   const router = useRouter();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
@@ -64,7 +66,7 @@ export default function ChatPage() {
     setIsSending(true);
 
     try {
-      const chatApiUrl = process.env.NEXT_PUBLIC_CHAT_API_URL || 'http://localhost:8002';
+      const chatApiUrl = process.env.NEXT_PUBLIC_CHAT_API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001';
       const response = await fetch(`${chatApiUrl}/api/${user.id}/chat`, {
         method: 'POST',
         headers: {
@@ -78,6 +80,12 @@ export default function ChatPage() {
       });
 
       if (!response.ok) {
+        if (response.status === 401) {
+          // Token expired - redirect to sign in
+          localStorage.removeItem('token');
+          router.push('/signin?expired=true');
+          return;
+        }
         throw new Error('Failed to send message');
       }
 
@@ -96,12 +104,70 @@ export default function ChatPage() {
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
+
+      // Log activities for successful tool calls with task details from response
+      if (data.tool_calls && Array.isArray(data.tool_calls)) {
+        const responseText = data.response.toLowerCase();
+
+        data.tool_calls.forEach((toolCall: { tool_name: string; status: string }) => {
+          if (toolCall.status === 'success') {
+            // Try to extract task information from the AI's response
+            let taskInfo = '';
+
+            // Extract task name/ID from response text
+            // Look for patterns like "task 'Name'" or "task ID X"
+            const taskNameMatch = data.response.match(/['"]([^'"]+)['"]/);
+            const taskIdMatch = data.response.match(/task (\d+)/i);
+
+            if (taskNameMatch) {
+              taskInfo = taskNameMatch[1];
+            } else if (taskIdMatch) {
+              taskInfo = `task ${taskIdMatch[1]}`;
+            }
+
+            // Map tool names to activity types and descriptions
+            switch (toolCall.tool_name) {
+              case 'add_task':
+                logActivity({
+                  action: taskInfo ? `Created "${taskInfo}"` : 'Created a task',
+                  type: 'task-created'
+                });
+                break;
+              case 'complete_task':
+                logActivity({
+                  action: taskInfo ? `Completed "${taskInfo}"` : 'Completed a task',
+                  type: 'task-completed'
+                });
+                break;
+              case 'reopen_task':
+                logActivity({
+                  action: taskInfo ? `Reopened "${taskInfo}"` : 'Reopened a task',
+                  type: 'task-edited'
+                });
+                break;
+              case 'update_task':
+                logActivity({
+                  action: taskInfo ? `Updated "${taskInfo}"` : 'Updated a task',
+                  type: 'task-edited'
+                });
+                break;
+              case 'delete_task':
+                logActivity({
+                  action: taskInfo ? `Deleted "${taskInfo}"` : 'Deleted a task',
+                  type: 'task-deleted'
+                });
+                break;
+              // list_tasks and get_task don't need activity logging (read-only)
+            }
+          }
+        });
+      }
     } catch (error) {
       console.error('Error sending message:', error);
       const errorMessage: Message = {
         id: Date.now().toString(),
         role: 'assistant',
-        content: 'Sorry, I encountered an error. Please make sure the AI Chat Agent server is running on port 8002.',
+        content: 'Sorry, I encountered an error. Please try again or check your connection.',
         timestamp: new Date().toISOString(),
       };
       setMessages((prev) => [...prev, errorMessage]);

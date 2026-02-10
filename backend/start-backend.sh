@@ -28,29 +28,21 @@ if [ ! -f ".env" ]; then
 fi
 
 echo ""
-echo "Starting Main API Server on port 8000..."
+echo "Starting Main API Server (with integrated MCP) on port 8001..."
 echo ""
-python -m uvicorn main:app --reload --port 8000 &
+python -m uvicorn main:app --reload --port 8001 &
 API_PID=$!
 
-sleep 3
-
-echo ""
-echo "Starting MCP Server on port 8001..."
-echo ""
-python -m uvicorn mcp.server:app --reload --port 8001 &
-MCP_PID=$!
-
 echo ""
 echo "========================================"
-echo "Backend servers are running"
+echo "Backend server is running"
 echo "========================================"
 echo ""
-echo "Main API: http://localhost:8000 (PID: $API_PID)"
-echo "MCP Server: http://localhost:8001 (PID: $MCP_PID)"
+echo "Main API: http://localhost:8001 (PID: $API_PID)"
+echo "(MCP tools are integrated into the main API)"
 echo ""
-echo "Press Ctrl+C to stop all servers"
+echo "Press Ctrl+C to stop the server"
 echo ""
 
-# Wait for both processes
-wait $API_PID $MCP_PID
+# Wait for the process
+wait $API_PID

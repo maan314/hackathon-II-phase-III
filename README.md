@@ -1,47 +1,50 @@
 # Hackathon II Phase III - Full Stack AI Task Management
 
-**Status:** ✅ Ready to Run | **Integration:** Complete | **Documentation:** Comprehensive
+**Status:** ✅ Ready to Run | **Integration:** Complete | **AI Agent:** Fully Functional
 
-A full-stack application featuring AI-powered task management with natural language processing, MCP (Model Context Protocol) tools, and a modern Next.js frontend.
+A full-stack application featuring AI-powered task management with natural language processing, integrated MCP tools, and a modern Next.js frontend.
 
 ---
 
 ## 🚀 Quick Start
 
-### Prerequisites Check
+### Start Backend Server
 ```bash
-# Windows
-preflight-check.bat
-
-# Linux/Mac
-./preflight-check.sh
+cd backend
+start-backend.bat    # Windows
+./start-backend.sh   # Linux/Mac
 ```
 
-### Start All Servers
-```bash
-# Windows
-start-all.bat
+This starts:
+- Main API Server on port 8000
+- MCP Server on port 8001
 
-# Linux/Mac
-./start-all.sh
+### Start Frontend Server
+```bash
+cd frontend
+start-frontend.bat   # Windows
+./start-frontend.sh  # Linux/Mac
 ```
+
+This starts the Next.js frontend on port 3000.
 
 ### Access Points
 - **Frontend:** http://localhost:3000
-- **Backend API:** http://localhost:8000
-- **MCP Server:** http://localhost:8001
+- **Backend API:** http://localhost:8001 (configured in frontend/.env.local)
+- **MCP Server:** http://localhost:8001 (integrated)
 
 ---
 
-## ⚠️ IMPORTANT: Before Starting
+## ⚠️ IMPORTANT: Configuration
 
-**You MUST add your OpenAI API key to `backend/.env`:**
+**Backend `.env` is already configured with:**
+- ✅ Database connection (Neon PostgreSQL)
+- ✅ Cohere API key
+- ✅ AI agent settings
 
-```bash
-OPENAI_API_KEY=sk-proj-your-actual-openai-api-key-here
-```
-
-Get your API key from: https://platform.openai.com/api-keys
+**Frontend `.env.local` is already configured with:**
+- ✅ Backend API URL: http://localhost:8001
+- ✅ Chat API URL: http://localhost:8001
 
 ---
 
@@ -60,7 +63,7 @@ hackathon-II-phase-III/
 │   │   ├── tools/            # Tool handlers
 │   │   └── schemas/          # Pydantic schemas
 │   ├── agent/                 # AI Agent Integration
-│   │   ├── agent.py          # OpenAI agent
+│   │   ├── agent.py          # Cohere agent
 │   │   ├── mcp_client.py     # MCP client
 │   │   └── mcp_tools.py      # Tool definitions
 │   ├── main.py               # Main API server
@@ -82,13 +85,9 @@ hackathon-II-phase-III/
 │
 ├── history/                  # Prompt history records
 │
-├── start-all.bat            # Windows: Start all servers
-├── start-all.sh             # Linux/Mac: Start all servers
-├── preflight-check.bat      # Windows: Prerequisites check
-├── preflight-check.sh       # Linux/Mac: Prerequisites check
-├── QUICK_START.md           # Quick start guide
-├── INTEGRATION_GUIDE.md     # Detailed integration guide
-└── INTEGRATION_COMPLETE.md  # Integration summary
+├── .gitignore               # Git ignore rules
+├── CLAUDE.md                # Claude Code project instructions
+└── README.md                # This file
 ```
 
 ---
@@ -103,7 +102,7 @@ hackathon-II-phase-III/
 
 ### Backend Features
 - **FastAPI REST API:** High-performance async API
-- **OpenAI Integration:** GPT-4 powered chat agent
+- **Cohere Integration:** Command-R-Plus powered chat agent
 - **MCP Server:** Model Context Protocol for tool calling
 - **Database:** Neon PostgreSQL with SQLModel ORM
 - **Stateless Architecture:** Horizontal scaling ready
@@ -121,7 +120,7 @@ hackathon-II-phase-III/
 
 ### Backend
 - **Framework:** FastAPI 0.109.0
-- **AI:** OpenAI GPT-4
+- **AI:** Cohere Command-R-Plus
 - **ORM:** SQLModel 0.0.14
 - **Database:** Neon PostgreSQL
 - **Server:** Uvicorn (ASGI)
@@ -162,7 +161,7 @@ source venv/bin/activate
 pip install -r requirements-chat.txt
 
 # Configure environment
-# Edit .env and add your OPENAI_API_KEY
+# Edit .env and add your COHERE_API_KEY
 ```
 
 ### 2. Frontend Setup
@@ -188,13 +187,22 @@ python -m backend.mcp.db.migrate
 
 ### 4. Start Servers
 
+**Backend:**
 ```bash
-# From project root
+cd backend
 # Windows:
-start-all.bat
-
+start-backend.bat
 # Linux/Mac:
-./start-all.sh
+./start-backend.sh
+```
+
+**Frontend:**
+```bash
+cd frontend
+# Windows:
+start-frontend.bat
+# Linux/Mac:
+./start-frontend.sh
 ```
 
 ---
@@ -203,21 +211,15 @@ start-all.bat
 
 ### Test Backend
 ```bash
-curl http://localhost:8000/health
-```
-
-### Test MCP Server
-```bash
 curl http://localhost:8001/health
 ```
 
-### Test AI Task Management
+### Test AI Chat Agent
 ```bash
-curl -X POST http://localhost:8000/api/test_user/chat_mcp \
+curl -X POST http://localhost:8001/api/test_user/chat \
   -H "Content-Type: application/json" \
   -d '{
-    "message": "Create a task to review the proposal",
-    "enable_mcp_tools": true
+    "message": "Create a task to review the proposal"
   }'
 ```
 
@@ -228,19 +230,8 @@ Open browser: http://localhost:3000
 
 ## 📚 Documentation
 
-### Quick References
-- **[QUICK_START.md](QUICK_START.md)** - Get started in 5 minutes
-- **[INTEGRATION_GUIDE.md](INTEGRATION_GUIDE.md)** - Detailed setup and troubleshooting
-- **[INTEGRATION_COMPLETE.md](INTEGRATION_COMPLETE.md)** - Integration summary
-
-### Implementation Details
-- **[IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md)** - MCP server implementation
-- **[backend/mcp/README.md](backend/mcp/README.md)** - MCP server documentation
-- **[MCP_VALIDATION_CHECKLIST.md](MCP_VALIDATION_CHECKLIST.md)** - Validation guide
-
 ### Specifications
-- **[specs/2-ai-chat-agent/](specs/2-ai-chat-agent/)** - AI Chat Agent spec
-- **[specs/3-mcp-task-tools/](specs/3-mcp-task-tools/)** - MCP Tools spec
+- **[specs/3-ai-chat-agent/](specs/3-ai-chat-agent/)** - AI Chat Agent specification and implementation details
 
 ---
 
@@ -251,33 +242,41 @@ Open browser: http://localhost:3000
 # Database (Already configured)
 DATABASE_URL=postgresql://...
 
-# OpenAI (YOU MUST ADD THIS)
-OPENAI_API_KEY=sk-proj-your-key-here
+# Cohere (Already configured)
+COHERE_API_KEY=NKrMXVjviqLyR3ZL5ljw9eKTHW7vwvSvnkUrOtPi
+
+# AI Agent Configuration
+AGENT_MODEL=command-r-08-2024
+AGENT_TEMPERATURE=0.7
+AGENT_MAX_TOKENS=1000
+AGENT_TIMEOUT=60
 
 # Application
 ENVIRONMENT=development
 LOG_LEVEL=INFO
-API_TIMEOUT=10
 ```
 
 ### Frontend Environment Variables (`frontend/.env.local`)
 ```bash
 # Backend API URL (Already configured)
-NEXT_PUBLIC_API_URL=http://localhost:8000
+NEXT_PUBLIC_API_URL=http://localhost:8001
 
-# MCP Server URL (Already configured)
-NEXT_PUBLIC_MCP_URL=http://localhost:8001
+# Chat API URL (Already configured)
+NEXT_PUBLIC_CHAT_API_URL=http://localhost:8001
 ```
 
 ---
 
 ## 🌐 API Endpoints
 
-### Backend API (Port 8000)
+### Backend API (Port 8001)
 - `GET /` - Root endpoint
 - `GET /health` - Health check
-- `POST /api/{user_id}/chat` - **NEW: AI Chat Agent with conversation persistence**
-- `POST /api/{user_id}/chat_mcp` - Chat with MCP tools
+- `POST /api/{user_id}/chat` - AI Chat Agent with conversation persistence and tool calling
+- `GET /api/{user_id}/todos` - List user tasks
+- `POST /api/{user_id}/todos` - Create new task
+- `PUT /api/{user_id}/todos/{todo_id}` - Update task
+- `DELETE /api/{user_id}/todos/{todo_id}` - Delete task
 - `GET /api/{user_id}/conversations` - List conversations
 - `GET /api/{user_id}/conversations/{id}/messages` - Get messages
 
@@ -288,7 +287,7 @@ NEXT_PUBLIC_MCP_URL=http://localhost:8001
 **Features:**
 - Persistent conversation history across sessions
 - Context-aware responses using conversation history
-- Natural language task management via OpenAI GPT-4
+- Natural language task management via Cohere Command-R-Plus
 - Automatic tool invocation for task operations
 - User isolation and authentication
 
@@ -361,7 +360,7 @@ The AI agent understands natural language for task management:
 ## 🐛 Troubleshooting
 
 ### Backend Won't Start
-- **Missing OpenAI API key:** Add to `backend/.env`
+- **Missing Cohere API key:** Add to `backend/.env`
 - **Port 8000 in use:** Kill existing process
 - **Database connection failed:** Check DATABASE_URL
 
@@ -422,7 +421,7 @@ Hackathon Project - Phase III
 ## 🎉 Ready to Start?
 
 1. **Check prerequisites:** Run `preflight-check`
-2. **Add OpenAI API key:** Edit `backend/.env`
+2. **Add Cohere API key:** Edit `backend/.env`
 3. **Start all servers:** Run `start-all`
 4. **Open browser:** http://localhost:3000
 

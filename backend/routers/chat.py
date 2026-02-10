@@ -10,6 +10,14 @@ from uuid import UUID
 from datetime import datetime
 from sqlmodel import Session
 import json
+import os
+from dotenv import load_dotenv
+from pathlib import Path
+
+# Load environment variables from backend/.env
+backend_dir = Path(__file__).parent.parent
+env_path = backend_dir / '.env'
+load_dotenv(dotenv_path=env_path)
 
 from database import get_session
 from core.security import verify_token
@@ -175,24 +183,31 @@ async def send_chat_message(
 
         # Exclude the current user message from history (it's already in the context)
         history_messages = [
-            {"role": msg.role.value, "content": msg.content}
+            {"role": msg.role.value if hasattr(msg.role, 'value') else str(msg.role), "content": msg.content}
             for msg in messages[:-1]  # Exclude last message (current one)
         ]
 
         # Apply context window management
         history_messages = context_manager.prepare_context(history_messages)
 
-        # T033: Process message with agent
+        # T033: Process message with agent (with session for tool execution)
         try:
             logger.info(f"Invoking AI agent - User: {user_id}, Message length: {len(request.message)}")
             agent_response = await agent_service.process_message(
                 user_message=request.message,
                 conversation_history=history_messages,
-                user_id=user_id
+                user_id=user_id,
+                session=session  # Pass session for tool execution
             )
-            logger.info(f"Agent response received - User: {user_id}, Response length: {len(agent_response.get('content', ''))}, Tool calls: {len(agent_response.get('tool_calls', []))}")
+            tool_calls = agent_response.get('tool_calls') or []
+            logger.info(f"Agent response received - User: {user_id}, Response length: {len(agent_response.get('content', ''))}, Tool calls: {len(tool_calls)}")
         except Exception as e:
-            # T037: Handle OpenAI API failures
+            # Log full traceback for debugging
+            import traceback
+            logger.error(f"AI service error: {str(e)}")
+            logger.error(f"Traceback: {traceback.format_exc()}")
+
+            # T037: Handle Cohere API failures
             if "timeout" in str(e).lower():
                 raise HTTPException(
                     status_code=status.HTTP_504_GATEWAY_TIMEOUT,
@@ -203,32 +218,14 @@ async def send_chat_message(
                 detail=f"AI service error: {str(e)}"
             )
 
-        # Handle tool calls if present
+        # Handle tool calls if present (for metadata only - execution happens in agent_service)
         tool_call_summaries = []
         if agent_response.get("tool_calls"):
-            # Create tool handler with session
-            tool_handler = ToolHandler(session)
-
             for tool_call in agent_response["tool_calls"]:
-                try:
-                    # Invoke tool with user_id injection
-                    tool_result = await tool_handler.invoke_tool(
-                        tool_name=tool_call.function.name,
-                        arguments=json.loads(tool_call.function.arguments),
-                        user_id=user_id
-                    )
-
-                    tool_call_summaries.append(ToolCallSummary(
-                        tool_name=tool_call.function.name,
-                        status=tool_result["status"]
-                    ))
-                except Exception as e:
-                    # T039: Handle tool invocation failures
-                    logger.error(f"Tool invocation failed: {str(e)}")
-                    tool_call_summaries.append(ToolCallSummary(
-                        tool_name=tool_call.function.name,
-                        status="error"
-                    ))
+                tool_call_summaries.append(ToolCallSummary(
+                    tool_name=tool_call["name"],
+                    status="success"  # Tools already executed in agent_service
+                ))
 
         # T034: Persist agent response with tool_calls metadata
         assistant_message = repo.add_message(

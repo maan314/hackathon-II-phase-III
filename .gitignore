@@ -85,6 +85,7 @@ tmp/
 temp/
 *.tmp
 *.temp
+nul
 
 # Package manager caches
 npm-shrinkwrap.json

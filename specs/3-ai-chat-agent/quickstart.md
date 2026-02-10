@@ -19,7 +19,7 @@ This guide provides step-by-step instructions for setting up, implementing, and 
 - pip (Python package manager)
 
 ### Required Accounts
-- OpenAI API account with API key
+- Cohere API account with API key
 - Neon PostgreSQL database (already configured)
 - Access to existing backend repository
 
@@ -47,7 +47,7 @@ python-multipart>=0.0.6
 pydantic>=2.0.0
 
 # New dependencies for AI Chat Agent
-openai>=1.10.0
+cohere>=5.0.0
 asyncio>=3.4.3
 python-dotenv>=1.0.0
 ```
@@ -68,8 +68,8 @@ DATABASE_URL=postgresql://user:password@host/database
 JWT_SECRET=your-jwt-secret
 
 # New variables for AI Chat Agent
-OPENAI_API_KEY=sk-your-openai-api-key-here
-AGENT_MODEL=gpt-4-turbo-preview
+COHERE_API_KEY=your-cohere-api-key-here
+AGENT_MODEL=command-r-plus
 AGENT_TEMPERATURE=0.7
 AGENT_MAX_TOKENS=1000
 AGENT_TIMEOUT=30
@@ -213,13 +213,13 @@ Create `backend/services/agent_service.py`:
 ```python
 import os
 import asyncio
-from openai import AsyncOpenAI
+from cohere import AsyncClient
 from typing import List, Dict, Optional
 
 class AgentService:
     def __init__(self):
-        self.client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-        self.model = os.getenv("AGENT_MODEL", "gpt-4-turbo-preview")
+        self.client = AsyncClient(api_key=os.getenv("COHERE_API_KEY"))
+        self.model = os.getenv("AGENT_MODEL", "command-r-plus")
         self.temperature = float(os.getenv("AGENT_TEMPERATURE", "0.7"))
         self.max_tokens = int(os.getenv("AGENT_MAX_TOKENS", "1000"))
         self.timeout = int(os.getenv("AGENT_TIMEOUT", "30"))
@@ -245,7 +245,7 @@ BEHAVIORAL GUIDELINES:
 """
 
     def _load_tools(self) -> List[Dict]:
-        # Load MCP tool schemas and convert to OpenAI function format
+        # Load MCP tool schemas and convert to Cohere function format
         return [
             {
                 "type": "function",
@@ -507,14 +507,14 @@ psql $DATABASE_URL -c "SELECT * FROM messages WHERE conversation_id='YOUR_CONVER
 
 ## Troubleshooting
 
-### Issue: OpenAI API Key Invalid
+### Issue: Cohere API Key Invalid
 
-**Error:** `openai.AuthenticationError: Invalid API key`
+**Error:** `cohere.error.CohereAPIError: Invalid API key`
 
 **Solution:**
 1. Verify API key in `.env` file
 2. Check key has no extra spaces or quotes
-3. Verify key is active in OpenAI dashboard
+3. Verify key is active in Cohere dashboard
 
 ### Issue: Database Connection Failed
 
@@ -531,7 +531,7 @@ psql $DATABASE_URL -c "SELECT * FROM messages WHERE conversation_id='YOUR_CONVER
 
 **Solution:**
 1. Increase AGENT_TIMEOUT in `.env`
-2. Check OpenAI API status
+2. Check Cohere API status
 3. Simplify user message
 
 ### Issue: Tool Invocation Failed
@@ -560,7 +560,7 @@ psql $DATABASE_URL -c "SELECT * FROM messages WHERE conversation_id='YOUR_CONVER
 
 ## Additional Resources
 
-- [OpenAI API Documentation](https://platform.openai.com/docs)
+- [Cohere API Documentation](https://docs.cohere.com/)
 - [FastAPI Documentation](https://fastapi.tiangolo.com/)
 - [SQLModel Documentation](https://sqlmodel.tiangolo.com/)
 - [Neon PostgreSQL Documentation](https://neon.tech/docs)

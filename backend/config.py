@@ -18,7 +18,7 @@ class Config:
 
     Required Environment Variables:
     - DATABASE_URL: Neon PostgreSQL connection string
-    - OPENAI_API_KEY: OpenAI API key for agent processing
+    - COHERE_API_KEY: Cohere API key for agent processing
 
     Optional Environment Variables:
     - ENVIRONMENT: development/production (default: development)
@@ -28,8 +28,11 @@ class Config:
     # Database Configuration
     DATABASE_URL: str = os.getenv("DATABASE_URL", "")
 
-    # OpenAI Configuration
-    OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
+    # Cohere Configuration
+    COHERE_API_KEY: str = os.getenv("COHERE_API_KEY", "")
+    AGENT_MODEL: str = os.getenv("AGENT_MODEL", "command-r-08-2024")
+    AGENT_TEMPERATURE: float = float(os.getenv("AGENT_TEMPERATURE", "0.7"))
+    AGENT_MAX_TOKENS: int = int(os.getenv("AGENT_MAX_TOKENS", "1000"))
 
     # Application Configuration
     ENVIRONMENT: str = os.getenv("ENVIRONMENT", "development")
@@ -55,8 +58,8 @@ class Config:
         if not cls.DATABASE_URL:
             raise ValueError("DATABASE_URL environment variable is required")
 
-        if not cls.OPENAI_API_KEY:
-            raise ValueError("OPENAI_API_KEY environment variable is required")
+        if not cls.COHERE_API_KEY:
+            raise ValueError("COHERE_API_KEY environment variable is required")
 
     @classmethod
     def is_production(cls) -> bool:

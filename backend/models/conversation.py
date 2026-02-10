@@ -1,7 +1,8 @@
 """
 Conversation and Message models for AI Chat Agent system.
 """
-from sqlmodel import SQLModel, Field, Relationship
+from sqlmodel import SQLModel, Field, Relationship, Column
+from sqlalchemy import JSON, String
 from datetime import datetime
 from uuid import UUID, uuid4
 from typing import Optional, List
@@ -24,7 +25,7 @@ class Conversation(SQLModel, table=True):
         title: Optional conversation title (auto-generated from first message)
         created_at: Conversation creation timestamp
         updated_at: Last update timestamp
-        metadata: Additional conversation metadata (JSONB)
+        extra_data: Additional conversation metadata (JSON)
     """
     __tablename__ = "conversations"
 
@@ -33,7 +34,7 @@ class Conversation(SQLModel, table=True):
     title: Optional[str] = Field(default=None, max_length=500)
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
-    metadata: Optional[dict] = Field(default=None, sa_column_kwargs={"type_": "JSONB"})
+    extra_data: Optional[dict] = Field(default=None, sa_column=Column(JSON))
 
     # Relationship to messages
     messages: List["Message"] = Relationship(back_populates="conversation")
@@ -49,18 +50,18 @@ class Message(SQLModel, table=True):
         role: Message sender role (user or assistant)
         content: Message text content
         timestamp: Message creation timestamp
-        tool_calls: Tool invocations made by agent (JSONB)
-        metadata: Additional message metadata (JSONB)
+        tool_calls: Tool invocations made by agent (JSON)
+        extra_data: Additional message metadata (JSON)
     """
     __tablename__ = "messages"
 
     id: UUID = Field(default_factory=uuid4, primary_key=True)
     conversation_id: UUID = Field(foreign_key="conversations.id", index=True)
-    role: MessageRole = Field(sa_column_kwargs={"type_": "VARCHAR(20)"})
+    role: MessageRole = Field(sa_column=Column(String(20)))
     content: str = Field(min_length=1)
     timestamp: datetime = Field(default_factory=datetime.utcnow, index=True)
-    tool_calls: Optional[List[dict]] = Field(default=None, sa_column_kwargs={"type_": "JSONB"})
-    metadata: Optional[dict] = Field(default=None, sa_column_kwargs={"type_": "JSONB"})
+    tool_calls: Optional[List[dict]] = Field(default=None, sa_column=Column(JSON))
+    extra_data: Optional[dict] = Field(default=None, sa_column=Column(JSON))
 
     # Relationship to conversation
     conversation: Optional[Conversation] = Relationship(back_populates="messages")

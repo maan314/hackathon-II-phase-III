@@ -15,9 +15,9 @@ export default function TasksPage() {
   const router = useRouter();
   const { logActivity } = useActivity();
   const [todos, setTodos] = useState<Todo[]>([]);
-  const [newTodo, setNewTodo] = useState({ title: '', description: '' });
+  const [newTodo, setNewTodo] = useState({ title: '', description: '', due_date: '' });
   const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
-  const [editForm, setEditForm] = useState({ title: '', description: '' });
+  const [editForm, setEditForm] = useState({ title: '', description: '', due_date: '' });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -53,11 +53,12 @@ export default function TasksPage() {
       const response = await api.post<Todo>('/todos', {
         title: newTodo.title,
         description: newTodo.description,
+        due_date: newTodo.due_date || null,
         is_completed: false
       });
 
       setTodos([response.data, ...todos]);
-      setNewTodo({ title: '', description: '' });
+      setNewTodo({ title: '', description: '', due_date: '' });
       setError(null);
 
       // Log activity
@@ -130,13 +131,17 @@ export default function TasksPage() {
   // Start editing a todo
   const startEditing = (todo: Todo) => {
     setEditingTodo(todo);
-    setEditForm({ title: todo.title, description: todo.description });
+    setEditForm({
+      title: todo.title,
+      description: todo.description,
+      due_date: todo.due_date ? new Date(todo.due_date).toISOString().split('T')[0] : ''
+    });
   };
 
   // Cancel editing
   const cancelEditing = () => {
     setEditingTodo(null);
-    setEditForm({ title: '', description: '' });
+    setEditForm({ title: '', description: '', due_date: '' });
   };
 
   // Save edited todo
@@ -150,6 +155,7 @@ export default function TasksPage() {
       const response = await api.put<Todo>(`/todos/${id}`, {
         title: editForm.title,
         description: editForm.description,
+        due_date: editForm.due_date || null,
         is_completed: editingTodo?.is_completed || false
       });
 
@@ -158,7 +164,7 @@ export default function TasksPage() {
       ));
 
       setEditingTodo(null);
-      setEditForm({ title: '', description: '' });
+      setEditForm({ title: '', description: '', due_date: '' });
       setError(null);
 
       // Log activity
@@ -198,12 +204,20 @@ export default function TasksPage() {
 
         {/* Add New Todo Form */}
         <form onSubmit={handleCreateTodo} className="mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
             <div className="md:col-span-2">
               <Input
                 value={newTodo.title}
                 onChange={(e) => setNewTodo({...newTodo, title: e.target.value})}
                 placeholder="Task title..."
+                className="h-12 bg-gray-800/50 border-cyan-500/30 text-white placeholder-gray-400"
+              />
+            </div>
+            <div className="md:col-span-2">
+              <Input
+                type="date"
+                value={newTodo.due_date}
+                onChange={(e) => setNewTodo({...newTodo, due_date: e.target.value})}
                 className="h-12 bg-gray-800/50 border-cyan-500/30 text-white placeholder-gray-400"
               />
             </div>
@@ -258,6 +272,7 @@ export default function TasksPage() {
                     <Input
                       value={editForm.title}
                       onChange={(e) => setEditForm({...editForm, title: e.target.value})}
+                      placeholder="Task title"
                       className="h-10 bg-gray-800/50 border-cyan-500/30 text-white placeholder-gray-400"
                     />
                     <Textarea
@@ -266,6 +281,12 @@ export default function TasksPage() {
                       placeholder="Task description (optional)..."
                       rows={2}
                       className="bg-gray-800/50 border-cyan-500/30 text-white placeholder-gray-400"
+                    />
+                    <Input
+                      type="date"
+                      value={editForm.due_date}
+                      onChange={(e) => setEditForm({...editForm, due_date: e.target.value})}
+                      className="h-10 bg-gray-800/50 border-cyan-500/30 text-white placeholder-gray-400"
                     />
                     <div className="flex gap-2">
                       <Button
@@ -293,6 +314,25 @@ export default function TasksPage() {
                         className={`mt-1 ${todo.is_completed ? 'border-green-500' : 'border-cyan-500'} data-[state=checked]:bg-cyan-500 data-[state=checked]:border-cyan-500`}
                       />
                       <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <span className="px-2 py-1 text-xs font-mono bg-cyan-500/20 text-cyan-400 rounded border border-cyan-500/30">
+                            ID: {todo.id}
+                          </span>
+                          {todo.is_completed && (
+                            <span className="px-2 py-1 text-xs bg-green-500/20 text-green-400 rounded border border-green-500/30">
+                              Completed
+                            </span>
+                          )}
+                          {todo.due_date && !todo.is_completed && (
+                            <span className={`px-2 py-1 text-xs rounded border ${
+                              new Date(todo.due_date) < new Date()
+                                ? 'bg-red-500/20 text-red-400 border-red-500/30'
+                                : 'bg-blue-500/20 text-blue-400 border-blue-500/30'
+                            }`}>
+                              {new Date(todo.due_date) < new Date() ? '⚠️ Overdue' : '📅 Due'}: {new Date(todo.due_date).toLocaleDateString()}
+                            </span>
+                          )}
+                        </div>
                         <h3 className={`font-medium text-lg ${todo.is_completed ? 'line-through text-gray-500' : 'text-white'}`}>
                           {todo.title}
                         </h3>
@@ -301,9 +341,12 @@ export default function TasksPage() {
                             {todo.description}
                           </p>
                         )}
-                        <p className="mt-3 text-xs text-gray-500">
-                          Created: {new Date(todo.created_at).toLocaleDateString()}
-                        </p>
+                        <div className="mt-3 flex items-center gap-4 text-xs text-gray-500">
+                          <span>Created: {new Date(todo.created_at).toLocaleDateString()}</span>
+                          {todo.due_date && (
+                            <span>Due: {new Date(todo.due_date).toLocaleDateString()}</span>
+                          )}
+                        </div>
                       </div>
                       <div className="flex gap-2">
                         <Button

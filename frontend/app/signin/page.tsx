@@ -1,13 +1,21 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import SignInForm from '@/components/forms/signin-form';
 
 export default function SignInPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
+  const [sessionExpired, setSessionExpired] = useState(false);
+
+  useEffect(() => {
+    if (searchParams.get('expired') === 'true') {
+      setSessionExpired(true);
+    }
+  }, [searchParams]);
 
   const handleSignInSuccess = () => {
     // Redirect to dashboard after successful sign in
@@ -28,6 +36,14 @@ export default function SignInPage() {
           </h1>
           <p className="text-gray-400">Sign in to your account to continue</p>
         </div>
+
+        {sessionExpired && (
+          <div className="mb-6 rounded-lg bg-yellow-900/30 p-4 border border-yellow-500/50">
+            <p className="text-sm text-yellow-200">
+              ⏱️ Your session has expired. Please sign in again to continue.
+            </p>
+          </div>
+        )}
 
         <div className="mb-6">
           <SignInForm

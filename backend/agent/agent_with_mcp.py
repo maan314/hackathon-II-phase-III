@@ -1,23 +1,23 @@
 """
-OpenAI Agent with MCP Tool Integration.
+Cohere Agent with MCP Tool Integration.
 
 This module extends the base agent with MCP tool calling capabilities.
 The agent can invoke task management tools through the MCP server.
 
 Architecture:
-- OpenAI function calling for tool invocation
+- Cohere tool calling for tool invocation
 - MCP client for tool execution
 - Stateless design with conversation history
 - Tool call logging for audit trail
 
 For Judges:
 This demonstrates the integration between the AI agent and MCP tools.
-The agent uses OpenAI's function calling to decide when to use tools,
+The agent uses Cohere's tool calling to decide when to use tools,
 then executes them via the MCP client, and incorporates results back
 into the conversation.
 """
 
-from openai import OpenAI
+import cohere
 import logging
 import json
 from typing import List, Dict, Any
@@ -31,30 +31,32 @@ from backend.agent.logging import log_tool_call_success, log_tool_call_failure
 
 logger = logging.getLogger(__name__)
 
-# Initialize OpenAI client
-client = OpenAI(api_key=Config.OPENAI_API_KEY)
+# Initialize Cohere client
+client = cohere.Client(api_key=Config.COHERE_API_KEY)
 
 # Initialize MCP client
 mcp_client = MCPClient(base_url="http://localhost:8001")
 
 
-def create_agent_messages(conversation_history: List[Dict[str, str]], user_message: str) -> List[Dict[str, str]]:
+def create_agent_messages(conversation_history: List[Dict[str, str]], user_message: str) -> tuple:
     """
-    Create messages array for OpenAI Chat Completions API.
+    Create chat history and message for Cohere Chat API.
 
     Args:
         conversation_history: Previous messages from database
         user_message: New user message
 
     Returns:
-        List[Dict]: Messages formatted for OpenAI API
+        tuple: (chat_history, user_message) formatted for Cohere API
     """
-    messages = [
-        {"role": "system", "content": SYSTEM_PROMPT}
-    ]
-    messages.extend(conversation_history)
-    messages.append({"role": "user", "content": user_message})
-    return messages
+    chat_history = []
+    for msg in conversation_history:
+        role = "USER" if msg["role"] == "user" else "CHATBOT"
+        chat_history.append({
+            "role": role,
+            "message": msg["content"]
+        })
+    return chat_history, user_message
 
 
 async def run_agent_with_mcp_tools(
@@ -66,9 +68,9 @@ async def run_agent_with_mcp_tools(
     Execute agent with MCP tool calling capabilities.
 
     This function implements the full tool calling flow:
-    1. Send user message to OpenAI with tool definitions
+    1. Send user message to Cohere with tool definitions
     2. If agent requests tool calls, execute them via MCP client
-    3. Send tool results back to OpenAI
+    3. Send tool results back to Cohere
     4. Return final response with tool call metadata
 
     Stateless Design:
@@ -119,56 +121,52 @@ async def run_agent_with_mcp_tools(
         "I've created a task titled 'Review the proposal' for you."
     """
     try:
-        # Create messages with system prompt and history
-        messages = create_agent_messages(conversation_history, user_message)
+        # Create chat history with system prompt
+        chat_history, message = create_agent_messages(conversation_history, user_message)
 
-        # Get MCP tool definitions for OpenAI function calling
+        # Get MCP tool definitions for Cohere tool calling
         tools = get_tool_definitions()
 
-        logger.info(f"Calling OpenAI with {len(tools)} tools available")
+        logger.info(f"Calling Cohere with {len(tools)} tools available")
 
         # First API call: Agent decides which tools to use
-        response = client.chat.completions.create(
-            model="gpt-4",
-            messages=messages,
+        response = client.chat(
+            model="command-r-plus",
+            message=message,
+            chat_history=chat_history,
+            preamble=SYSTEM_PROMPT,
             tools=tools,
-            tool_choice="auto",  # Let agent decide when to use tools
             temperature=0.7,
-            max_tokens=1000,
-            timeout=Config.API_TIMEOUT
+            max_tokens=1000
         )
 
-        assistant_message = response.choices[0].message
         tool_calls_metadata = []
 
         # Check if agent requested tool calls
-        if assistant_message.tool_calls:
-            logger.info(f"Agent requested {len(assistant_message.tool_calls)} tool calls")
+        if hasattr(response, 'tool_calls') and response.tool_calls:
+            logger.info(f"Agent requested {len(response.tool_calls)} tool calls")
 
             # Add assistant message with tool calls to conversation
-            messages.append({
-                "role": "assistant",
-                "content": assistant_message.content or "",
+            chat_history.append({
+                "role": "CHATBOT",
+                "message": response.text or "",
                 "tool_calls": [
                     {
-                        "id": tc.id,
-                        "type": "function",
-                        "function": {
-                            "name": tc.function.name,
-                            "arguments": tc.function.arguments
-                        }
+                        "name": tc.name,
+                        "parameters": tc.parameters
                     }
-                    for tc in assistant_message.tool_calls
+                    for tc in response.tool_calls
                 ]
             })
 
             # Execute each tool call via MCP client
-            for tool_call in assistant_message.tool_calls:
-                tool_name = tool_call.function.name
+            tool_results = []
+            for tool_call in response.tool_calls:
+                tool_name = tool_call.name
 
                 try:
-                    # Parse tool arguments
-                    arguments = json.loads(tool_call.function.arguments)
+                    # Get tool arguments
+                    arguments = tool_call.parameters
 
                     # Add user_id to arguments (required for all MCP tools)
                     arguments["user_id"] = user_id
@@ -210,11 +208,13 @@ async def run_agent_with_mcp_tools(
                             )
                         )
 
-                    # Add tool result to conversation
-                    messages.append({
-                        "role": "tool",
-                        "tool_call_id": tool_call.id,
-                        "content": json.dumps(result)
+                    # Add tool result for next API call
+                    tool_results.append({
+                        "call": {
+                            "name": tool_name,
+                            "parameters": arguments
+                        },
+                        "outputs": [result]
                     })
 
                 except Exception as e:
@@ -225,35 +225,40 @@ async def run_agent_with_mcp_tools(
                         log_tool_call_failure(tool_name, {}, str(e))
                     )
 
-                    # Add error result to conversation
-                    messages.append({
-                        "role": "tool",
-                        "tool_call_id": tool_call.id,
-                        "content": json.dumps({
+                    # Add error result
+                    tool_results.append({
+                        "call": {
+                            "name": tool_name,
+                            "parameters": arguments if 'arguments' in locals() else {}
+                        },
+                        "outputs": [{
                             "status": "error",
                             "error": {
                                 "code": "EXECUTION_ERROR",
                                 "message": str(e)
                             }
-                        })
+                        }]
                     })
 
             # Second API call: Agent generates response based on tool results
-            logger.info("Calling OpenAI with tool results")
-            final_response = client.chat.completions.create(
-                model="gpt-4",
-                messages=messages,
+            logger.info("Calling Cohere with tool results")
+            final_response = client.chat(
+                model="command-r-plus",
+                message="",  # Empty message for tool result processing
+                chat_history=chat_history,
+                preamble=SYSTEM_PROMPT,
+                tools=tools,
+                tool_results=tool_results,
                 temperature=0.7,
-                max_tokens=1000,
-                timeout=Config.API_TIMEOUT
+                max_tokens=1000
             )
 
-            final_message = final_response.choices[0].message.content
+            final_message = final_response.text
 
         else:
             # No tool calls - agent responded directly
             logger.info("Agent responded without tool calls")
-            final_message = assistant_message.content
+            final_message = response.text
 
         return {
             "message": final_message,
@@ -281,17 +286,18 @@ def run_agent(conversation_history: List[Dict[str, str]], user_message: str) -> 
         Dict: Agent response with message and empty tool_calls
     """
     try:
-        messages = create_agent_messages(conversation_history, user_message)
+        chat_history, message = create_agent_messages(conversation_history, user_message)
 
-        response = client.chat.completions.create(
-            model="gpt-4",
-            messages=messages,
+        response = client.chat(
+            model="command-r-plus",
+            message=message,
+            chat_history=chat_history,
+            preamble=SYSTEM_PROMPT,
             temperature=0.7,
-            max_tokens=1000,
-            timeout=Config.API_TIMEOUT
+            max_tokens=1000
         )
 
-        assistant_message = response.choices[0].message.content
+        assistant_message = response.text
 
         return {
             "message": assistant_message,

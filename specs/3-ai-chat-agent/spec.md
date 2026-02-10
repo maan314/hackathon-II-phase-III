@@ -195,7 +195,7 @@ The primary value is providing an intuitive, chat-based interface for task manag
 ### In Scope
 - Chat endpoint accepting user messages and returning AI responses
 - Conversation and Message database models with full CRUD operations
-- AI agent integration using OpenAI Agents SDK
+- AI agent integration using Cohere API
 - Agent system prompt defining task management capabilities
 - Tool invocation for all five task operations (add, list, update, complete, delete)
 - Conversation history loading and context management
@@ -246,12 +246,12 @@ The primary value is providing an intuitive, chat-based interface for task manag
 
 ## Assumptions
 
-1. **OpenAI API Availability**: The OpenAI Agents SDK and API are available and reliable during development and demo
+1. **Cohere API Availability**: The Cohere API is available and reliable during development and demo
 2. **Database Performance**: Neon PostgreSQL provides sufficient performance for conversation queries without additional caching
-3. **Token Limits**: Conversation history fits within OpenAI model context windows for typical task management dialogues (assuming ~50 messages per conversation)
+3. **Token Limits**: Conversation history fits within Cohere model context windows for typical task management dialogues (assuming ~50 messages per conversation)
 4. **Tool Schema Stability**: MCP tool schemas (add_task, list_tasks, etc.) are already defined and stable
 5. **Authentication System**: JWT authentication and user_id extraction are already implemented and functional
-6. **Network Latency**: API calls to OpenAI complete within 3-4 seconds for typical requests
+6. **Network Latency**: API calls to Cohere complete within 3-4 seconds for typical requests
 7. **User Behavior**: Users interact with one conversation at a time (no concurrent message sending to same conversation)
 8. **Error Recovery**: Users can retry failed requests manually; automatic retry is not required
 9. **Conversation Limits**: Users will have a reasonable number of conversations (<100) during hackathon demo period
@@ -260,7 +260,7 @@ The primary value is providing an intuitive, chat-based interface for task manag
 ## Dependencies
 
 ### External Services
-- OpenAI API (for Agents SDK and language model)
+- Cohere API (for language model and chat completions)
 - Neon PostgreSQL database (for conversation and message persistence)
 
 ### Internal Systems
@@ -269,7 +269,7 @@ The primary value is providing an intuitive, chat-based interface for task manag
 - Task database models (referenced by MCP tools)
 
 ### Development Tools
-- OpenAI Agents SDK (Python library)
+- Cohere Python SDK (Python library)
 - SQLModel ORM (for database operations)
 - FastAPI framework (for HTTP endpoint)
 
@@ -281,7 +281,7 @@ The primary value is providing an intuitive, chat-based interface for task manag
 ## Constraints
 
 **Constitutional Constraints:**
-- Backend: FastAPI + OpenAI Agents SDK
+- Backend: FastAPI + Cohere API
 - ORM: SQLModel | Database: Neon PostgreSQL
 - Auth: Better Auth with user_id enforcement
 - Endpoint: POST /api/{user_id}/chat (stateless)
@@ -302,7 +302,7 @@ The primary value is providing an intuitive, chat-based interface for task manag
 ## Risks
 
 ### High Priority
-1. **OpenAI API Rate Limits**: Risk of hitting rate limits during demo with multiple judges testing simultaneously
+1. **Cohere API Rate Limits**: Risk of hitting rate limits during demo with multiple judges testing simultaneously
    - Mitigation: Implement rate limiting on chat endpoint; prepare fallback demo data
 
 2. **AI Hallucination**: Agent may generate incorrect tool invocations or misinterpret user intent

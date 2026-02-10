@@ -42,14 +42,14 @@ This document provides an actionable task list for implementing the AI Chat Agen
 - [ ] All dependencies installed successfully
 - [ ] Environment variables configured
 - [ ] Database connection verified
-- [ ] OpenAI API key validated
+- [ ] Cohere API key validated
 
 ### Tasks
 
-- [x] T001 Install OpenAI SDK and dependencies in backend/requirements.txt
-- [x] T002 [P] Configure environment variables in .env (OPENAI_API_KEY, AGENT_MODEL, AGENT_TEMPERATURE, AGENT_MAX_TOKENS, AGENT_TIMEOUT, CONTEXT_WINDOW_SIZE)
+- [x] T001 Install Cohere SDK and dependencies in backend/requirements.txt
+- [x] T002 [P] Configure environment variables in .env (COHERE_API_KEY, AGENT_MODEL, AGENT_TEMPERATURE, AGENT_MAX_TOKENS, AGENT_TIMEOUT, CONTEXT_WINDOW_SIZE)
 - [x] T003 [P] Verify database connection to Neon PostgreSQL
-- [x] T004 [P] Validate OpenAI API key with test request
+- [x] T004 [P] Validate Cohere API key with test request
 
 **Dependencies:** None (all tasks can run in parallel after T001)
 
@@ -106,9 +106,9 @@ This document provides an actionable task list for implementing the AI Chat Agen
 ### Agent Layer Tasks
 
 - [x] T017 [US1] Create AgentService class in backend/services/agent_service.py
-- [x] T018 [US1] Initialize AsyncOpenAI client with API key in AgentService.__init__
+- [x] T018 [US1] Initialize AsyncClient (Cohere) with API key in AgentService.__init__
 - [x] T019 [US1] Define system prompt for task management agent in AgentService._load_system_prompt
-- [x] T020 [P] [US1] Load MCP tool schemas and convert to OpenAI function format in AgentService._load_tools
+- [x] T020 [P] [US1] Load MCP tool schemas and convert to Cohere function format in AgentService._load_tools
 - [x] T021 [US1] Implement process_message method with async/await and timeout handling in AgentService
 - [x] T022 [P] [US1] Implement tool invocation handler in backend/services/tool_handler.py
 - [x] T023 [P] [US1] Implement user_id injection for tool calls in tool_handler.py
@@ -132,7 +132,7 @@ This document provides an actionable task list for implementing the AI Chat Agen
 - [x] T034 [US1] Implement agent response persistence with tool_calls metadata in chat endpoint
 - [x] T035 [US1] Implement response formatting (ChatResponse) in chat endpoint
 - [x] T036 [P] [US1] Add input validation (message length, conversation_id format) in chat endpoint
-- [x] T037 [P] [US1] Implement error handling for OpenAI API failures in chat endpoint
+- [x] T037 [P] [US1] Implement error handling for Cohere API failures in chat endpoint
 - [x] T038 [P] [US1] Implement error handling for database failures in chat endpoint
 - [x] T039 [P] [US1] Implement error handling for MCP tool failures in chat endpoint
 - [x] T040 [US1] Register chat router in backend/main.py

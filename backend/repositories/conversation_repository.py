@@ -8,7 +8,7 @@ from typing import List, Optional
 from uuid import UUID
 from datetime import datetime
 
-from backend.models.conversation import Conversation, Message, MessageRole
+from models.conversation import Conversation, Message, MessageRole
 
 
 class ConversationRepository:

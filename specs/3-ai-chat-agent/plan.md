@@ -11,14 +11,14 @@
 **Architecture:**
 - Three-tier stateless architecture:
   - API Layer: FastAPI endpoint handling HTTP requests
-  - Agent Layer: OpenAI Agents SDK processing natural language and invoking tools
+  - Agent Layer: Cohere API processing natural language and invoking tools
   - Data Layer: Neon PostgreSQL storing conversations, messages, and tasks
 - Request flow: HTTP → Auth Middleware → Chat Endpoint → Load Conversation → Agent Processing → Tool Invocation → Persist Message → Response
 - Stateless design: Each request reconstructs context from database
 
 **Technologies:**
 - Backend Framework: FastAPI (Python)
-- AI Agent: OpenAI Agents SDK
+- AI Agent: Cohere API
 - ORM: SQLModel
 - Database: Neon PostgreSQL
 - Authentication: Better Auth with JWT
@@ -28,7 +28,7 @@
 **Infrastructure:**
 - Database: Neon PostgreSQL (serverless, already configured)
 - API Server: FastAPI application (existing backend)
-- OpenAI API: External service for agent processing
+- Cohere API: External service for agent processing
 - Environment: Development and production configurations via .env
 
 **Security:**

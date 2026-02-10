@@ -149,7 +149,18 @@
       "Bash(start-mcp-server.bat:*)",
       "Bash(frontend/components/ui/chat-message.tsx << 'EOF'\n'use client';\n\nimport { cn } from '@/lib/utils';\n\ninterface ChatMessageProps {\n  role: 'user' | 'assistant';\n  content: string;\n  timestamp?: string;\n  toolCalls?: Array<{\n    tool_name: string;\n    status: string;\n  }>;\n}\n\nexport function ChatMessage\\({ role, content, timestamp, toolCalls }: ChatMessageProps\\) {\n  const isUser = role === 'user';\n\n  return \\(\n    <div className={cn\\(\n      \"flex w-full mb-4\",\n      isUser ? \"justify-end\" : \"justify-start\"\n    \\)}>\n      <div className={cn\\(\n        \"max-w-[80%] rounded-lg p-4 shadow-lg\",\n        isUser \n          ? \"bg-gradient-to-r from-cyan-500 to-blue-600 text-white\"\n          : \"bg-gradient-to-r from-gray-800 to-gray-900 text-gray-100 border border-purple-500/30\"\n      \\)}>\n        <div className=\"flex items-start space-x-2\">\n          <div className=\"flex-1\">\n            <div className=\"flex items-center space-x-2 mb-2\">\n              <span className=\"text-xs font-semibold opacity-80\">\n                {isUser ? 'You' : 'AI Assistant'}\n              </span>\n              {timestamp && \\(\n                <span className=\"text-xs opacity-60\">\n                  {new Date\\(timestamp\\).toLocaleTimeString\\(\\)}\n                </span>\n              \\)}\n            </div>\n            <p className=\"text-sm whitespace-pre-wrap break-words\">{content}</p>\n            \n            {toolCalls && toolCalls.length > 0 && \\(\n              <div className=\"mt-3 pt-3 border-t border-purple-500/20\">\n                <p className=\"text-xs font-semibold mb-2 opacity-80\">Tool Actions:</p>\n                <div className=\"space-y-1\">\n                  {toolCalls.map\\(\\(tool, idx\\) => \\(\n                    <div key={idx} className=\"flex items-center space-x-2 text-xs\">\n                      <span className={cn\\(\n                        \"w-2 h-2 rounded-full\",\n                        tool.status === 'success' ? 'bg-green-400' : 'bg-red-400'\n                      \\)}></span>\n                      <span className=\"opacity-80\">{tool.tool_name}</span>\n                      <span className={cn\\(\n                        \"text-xs\",\n                        tool.status === 'success' ? 'text-green-400' : 'text-red-400'\n                      \\)}>\n                        {tool.status}\n                      </span>\n                    </div>\n                  \\)\\)}\n                </div>\n              </div>\n            \\)}\n          </div>\n        </div>\n      </div>\n    </div>\n  \\);\n}\nEOF)",
       "Bash(frontend/lib/utils.ts << 'EOF'\nimport { type ClassValue, clsx } from \"clsx\";\nimport { twMerge } from \"tailwind-merge\";\n\nexport function cn\\(...inputs: ClassValue[]\\) {\n  return twMerge\\(clsx\\(inputs\\)\\);\n}\nEOF)",
-      "Bash(del /F /Q nul)"
+      "Bash(del /F /Q nul)",
+      "Bash(findstr /i \"test\")",
+      "Bash(ls -la D:Quarter-4hackathon-II-phase-IIItest*.py)",
+      "Bash(git add -A)",
+      "Bash(python -c \"import sys; print\\(sys.executable\\)\")",
+      "Bash(timeout /t 2 /nobreak)",
+      "Bash(wmic process:*)",
+      "Bash(dir /b)",
+      "Bash(find . -name \"*.py\" -type f -exec grep -l \"Kiro Gateway\" {} ;)",
+      "Bash(exit 0)",
+      "Bash(del:*)",
+      "Bash(grep:*)"
     ]
   }
 }
