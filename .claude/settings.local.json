@@ -179,7 +179,8 @@
       "Bash(git commit -m \"$\\(cat <<''EOF''\nFix TypeScript errors and update landing page\n\nFixed TypeScript errors:\n- Changed firstName to first_name in dashboard page\n- Added null check for created_at in profile page\n\nUpdated landing page:\n- Removed floating particles animation that was causing build issues\n- Simplified component structure\n- Kept all neon styling and animations\n- Added custom gradient animation to Tailwind config\n\nAll pages compile successfully in dev mode.\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
       "Bash(netstat:*)",
       "Bash(if exist node_modules.cache rmdir /s /q node_modules.cache)",
-      "Bash(npx kill-port 3000)"
+      "Bash(npx kill-port 3000)",
+      "Bash(git add frontend/app/chat/page.tsx frontend/app/dashboard/page.tsx frontend/app/profile/page.tsx frontend/app/settings/page.tsx frontend/app/tasks/page.tsx frontend/lib/theme-context.tsx frontend/types/auth.ts)"
     ]
   }
 }
