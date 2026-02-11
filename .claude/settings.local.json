@@ -168,7 +168,8 @@
       "Bash(npx tsc:*)",
       "Bash(git add:*)",
       "Bash(git push:*)",
-      "Bash(git pull:*)"
+      "Bash(git pull:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nFix tsconfig.json to remove IDE errors while keeping build working\n\n- Removed target: es5 \\(use TypeScript default\\)\n- Removed baseUrl \\(not needed with current paths config\\)\n- Reverted moduleResolution to ''bundler'' \\(works better with Next.js 14 + TS 5.2\\)\n\nBuild still completes successfully with all 11 pages generated.\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")"
     ]
   }
 }
