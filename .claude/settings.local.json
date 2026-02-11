@@ -176,7 +176,10 @@
       "Bash(git add frontend/app/page.tsx)",
       "Bash(git commit -m \"$\\(cat <<''EOF''\nAdd stunning neon dark style landing page\n\nCreated a professional landing page with:\n- Neon gradient design \\(purple, cyan, pink\\)\n- Smooth fade-in animations on page load\n- Animated background with glowing orbs and particles\n- Three feature cards \\(AI Assistant, Real-time Sync, Smart Organization\\)\n- Interactive CTA buttons with hover effects\n- Stats section showing user metrics\n- Fully responsive design\n\nApp name: Todo Management App\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
       "Bash(set NODE_OPTIONS=--max-old-space-size=4096)",
-      "Bash(git commit -m \"$\\(cat <<''EOF''\nFix TypeScript errors and update landing page\n\nFixed TypeScript errors:\n- Changed firstName to first_name in dashboard page\n- Added null check for created_at in profile page\n\nUpdated landing page:\n- Removed floating particles animation that was causing build issues\n- Simplified component structure\n- Kept all neon styling and animations\n- Added custom gradient animation to Tailwind config\n\nAll pages compile successfully in dev mode.\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")"
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nFix TypeScript errors and update landing page\n\nFixed TypeScript errors:\n- Changed firstName to first_name in dashboard page\n- Added null check for created_at in profile page\n\nUpdated landing page:\n- Removed floating particles animation that was causing build issues\n- Simplified component structure\n- Kept all neon styling and animations\n- Added custom gradient animation to Tailwind config\n\nAll pages compile successfully in dev mode.\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(netstat:*)",
+      "Bash(if exist node_modules.cache rmdir /s /q node_modules.cache)",
+      "Bash(npx kill-port 3000)"
     ]
   }
 }
