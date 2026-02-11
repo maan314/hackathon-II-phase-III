@@ -1,14 +1,204 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+
 export default function HomePage() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
-    <div className="container mx-auto flex min-h-screen items-center justify-center py-10">
-      <div className="text-center">
-        <h1 className="text-3xl font-bold">Todo Management App</h1>
-        <p className="mt-2">Simple todo application</p>
-        <div className="mt-4 space-x-4">
-          <a href="/signup" className="text-blue-500 hover:underline">Sign Up</a>
-          <a href="/signin" className="text-blue-500 hover:underline">Sign In</a>
+    <div className="relative min-h-screen overflow-hidden bg-black">
+      {/* Animated Background Gradient */}
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-black to-cyan-900/20" />
+
+      {/* Animated Glow Orbs */}
+      <div className="absolute top-20 left-20 w-96 h-96 bg-purple-500/30 rounded-full blur-3xl animate-pulse" />
+      <div className="absolute bottom-20 right-20 w-96 h-96 bg-cyan-500/30 rounded-full blur-3xl animate-pulse delay-1000" />
+
+      {/* Grid Pattern Overlay */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(139,92,246,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(139,92,246,0.03)_1px,transparent_1px)] bg-[size:50px_50px]" />
+
+      {/* Main Content */}
+      <div className="relative z-10 container mx-auto px-6 py-20 flex flex-col items-center justify-center min-h-screen">
+
+        {/* Hero Section */}
+        <div className={`text-center space-y-8 transition-all duration-1000 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+
+          {/* App Name with Neon Glow */}
+          <div className="space-y-4">
+            <h1 className="text-6xl md:text-7xl font-bold tracking-tight">
+              <span className="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-gradient-x drop-shadow-[0_0_30px_rgba(139,92,246,0.5)]">
+                Todo Management App
+              </span>
+            </h1>
+            <div className="h-1 w-64 mx-auto bg-gradient-to-r from-transparent via-purple-500 to-transparent animate-pulse" />
+          </div>
+
+          {/* Tagline */}
+          <p className={`text-2xl md:text-3xl text-gray-300 font-light transition-all duration-1000 delay-200 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            Intelligent Task Management
+            <span className="text-cyan-400"> Powered by AI</span>
+          </p>
+
+          {/* Description */}
+          <p className={`text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed transition-all duration-1000 delay-300 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            Experience the future of productivity with our AI-powered task management system.
+            Create, organize, and complete tasks using natural language commands with our intelligent assistant.
+          </p>
+
+          {/* Feature Cards */}
+          <div className={`grid md:grid-cols-3 gap-6 mt-16 transition-all duration-1000 delay-500 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+
+            {/* Feature 1 */}
+            <div className="group relative p-6 rounded-2xl bg-gradient-to-br from-purple-900/20 to-transparent border border-purple-500/20 hover:border-purple-500/50 transition-all duration-300 hover:scale-105">
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="relative">
+                <div className="w-12 h-12 mb-4 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-400 text-2xl">
+                  🤖
+                </div>
+                <h3 className="text-xl font-semibold text-white mb-2">AI Assistant</h3>
+                <p className="text-gray-400 text-sm">
+                  Chat with our intelligent AI to manage tasks using natural language commands
+                </p>
+              </div>
+            </div>
+
+            {/* Feature 2 */}
+            <div className="group relative p-6 rounded-2xl bg-gradient-to-br from-cyan-900/20 to-transparent border border-cyan-500/20 hover:border-cyan-500/50 transition-all duration-300 hover:scale-105">
+              <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="relative">
+                <div className="w-12 h-12 mb-4 rounded-lg bg-cyan-500/20 flex items-center justify-center text-cyan-400 text-2xl">
+                  ⚡
+                </div>
+                <h3 className="text-xl font-semibold text-white mb-2">Real-time Sync</h3>
+                <p className="text-gray-400 text-sm">
+                  Your tasks sync instantly across all devices with cloud-powered storage
+                </p>
+              </div>
+            </div>
+
+            {/* Feature 3 */}
+            <div className="group relative p-6 rounded-2xl bg-gradient-to-br from-pink-900/20 to-transparent border border-pink-500/20 hover:border-pink-500/50 transition-all duration-300 hover:scale-105">
+              <div className="absolute inset-0 bg-gradient-to-br from-pink-500/10 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="relative">
+                <div className="w-12 h-12 mb-4 rounded-lg bg-pink-500/20 flex items-center justify-center text-pink-400 text-2xl">
+                  🎯
+                </div>
+                <h3 className="text-xl font-semibold text-white mb-2">Smart Organization</h3>
+                <p className="text-gray-400 text-sm">
+                  Automatically organize and prioritize tasks with intelligent categorization
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* CTA Buttons */}
+          <div className={`flex flex-col sm:flex-row gap-6 justify-center items-center mt-16 transition-all duration-1000 delay-700 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+
+            {/* Sign Up Button */}
+            <Link href="/signup">
+              <button className="group relative px-8 py-4 rounded-xl font-semibold text-lg overflow-hidden transition-all duration-300 hover:scale-105">
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 transition-all duration-300 group-hover:from-purple-500 group-hover:to-pink-500" />
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 blur-xl opacity-50 group-hover:opacity-75 transition-opacity duration-300" />
+                <span className="relative text-white flex items-center gap-2">
+                  Get Started Free
+                  <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
+                </span>
+              </button>
+            </Link>
+
+            {/* Sign In Button */}
+            <Link href="/signin">
+              <button className="group relative px-8 py-4 rounded-xl font-semibold text-lg border-2 border-cyan-500/50 text-cyan-400 hover:border-cyan-400 hover:text-cyan-300 transition-all duration-300 hover:scale-105 hover:shadow-[0_0_30px_rgba(34,211,238,0.3)]">
+                Sign In
+              </button>
+            </Link>
+          </div>
+
+          {/* Stats Section */}
+          <div className={`grid grid-cols-3 gap-8 mt-20 pt-12 border-t border-purple-500/20 transition-all duration-1000 delay-900 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            <div className="text-center">
+              <div className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                10K+
+              </div>
+              <div className="text-gray-500 text-sm mt-2">Active Users</div>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+                50K+
+              </div>
+              <div className="text-gray-500 text-sm mt-2">Tasks Completed</div>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl font-bold bg-gradient-to-r from-pink-400 to-cyan-400 bg-clip-text text-transparent">
+                99.9%
+              </div>
+              <div className="text-gray-500 text-sm mt-2">Uptime</div>
+            </div>
+          </div>
         </div>
       </div>
+
+      {/* Floating Particles Effect */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(20)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-1 h-1 bg-purple-400/30 rounded-full animate-float"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 5}s`,
+              animationDuration: `${5 + Math.random() * 10}s`,
+            }}
+          />
+        ))}
+      </div>
+
+      <style jsx>{`
+        @keyframes gradient-x {
+          0%, 100% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+        }
+
+        @keyframes float {
+          0%, 100% {
+            transform: translateY(0) translateX(0);
+            opacity: 0;
+          }
+          10% {
+            opacity: 1;
+          }
+          90% {
+            opacity: 1;
+          }
+          100% {
+            transform: translateY(-100vh) translateX(50px);
+            opacity: 0;
+          }
+        }
+
+        .animate-gradient-x {
+          background-size: 200% 200%;
+          animation: gradient-x 3s ease infinite;
+        }
+
+        .animate-float {
+          animation: float linear infinite;
+        }
+
+        .delay-1000 {
+          animation-delay: 1s;
+        }
+      `}</style>
     </div>
   );
 }
