@@ -55,7 +55,9 @@ export default function ProfilePage() {
                   </div>
                   <div className="flex items-center justify-between py-3">
                     <span className="text-gray-400">Member Since</span>
-                    <span className="text-white font-medium">{new Date(user.created_at).toLocaleDateString()}</span>
+                    <span className="text-white font-medium">
+                      {user.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}
+                    </span>
                   </div>
                 </div>
               </div>

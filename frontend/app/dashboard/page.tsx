@@ -55,7 +55,7 @@ export default function DashboardPage() {
                 <span className="text-lg font-bold">{(user?.first_name || user?.email?.charAt(0) || 'U').toUpperCase()}</span>
               </div>
               <div>
-                <h2 className="text-2xl font-bold">{user?.firstName || user?.email?.split('@')[0]}</h2>
+                <h2 className="text-2xl font-bold">{user?.first_name || user?.email?.split('@')[0]}</h2>
                 <p className="text-cyan-400">{user?.email}</p>
               </div>
             </div>

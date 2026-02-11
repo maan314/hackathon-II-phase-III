@@ -1,15 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
 export default function HomePage() {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   return (
     <div className="relative min-h-screen overflow-hidden bg-black">
       {/* Animated Background Gradient */}
@@ -17,7 +10,7 @@ export default function HomePage() {
 
       {/* Animated Glow Orbs */}
       <div className="absolute top-20 left-20 w-96 h-96 bg-purple-500/30 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-20 right-20 w-96 h-96 bg-cyan-500/30 rounded-full blur-3xl animate-pulse delay-1000" />
+      <div className="absolute bottom-20 right-20 w-96 h-96 bg-cyan-500/30 rounded-full blur-3xl animate-pulse" />
 
       {/* Grid Pattern Overlay */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(139,92,246,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(139,92,246,0.03)_1px,transparent_1px)] bg-[size:50px_50px]" />
@@ -26,7 +19,7 @@ export default function HomePage() {
       <div className="relative z-10 container mx-auto px-6 py-20 flex flex-col items-center justify-center min-h-screen">
 
         {/* Hero Section */}
-        <div className={`text-center space-y-8 transition-all duration-1000 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <div className="text-center space-y-8">
 
           {/* App Name with Neon Glow */}
           <div className="space-y-4">
@@ -39,19 +32,19 @@ export default function HomePage() {
           </div>
 
           {/* Tagline */}
-          <p className={`text-2xl md:text-3xl text-gray-300 font-light transition-all duration-1000 delay-200 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+          <p className="text-2xl md:text-3xl text-gray-300 font-light">
             Intelligent Task Management
             <span className="text-cyan-400"> Powered by AI</span>
           </p>
 
           {/* Description */}
-          <p className={`text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed transition-all duration-1000 delay-300 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+          <p className="text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed">
             Experience the future of productivity with our AI-powered task management system.
             Create, organize, and complete tasks using natural language commands with our intelligent assistant.
           </p>
 
           {/* Feature Cards */}
-          <div className={`grid md:grid-cols-3 gap-6 mt-16 transition-all duration-1000 delay-500 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+          <div className="grid md:grid-cols-3 gap-6 mt-16">
 
             {/* Feature 1 */}
             <div className="group relative p-6 rounded-2xl bg-gradient-to-br from-purple-900/20 to-transparent border border-purple-500/20 hover:border-purple-500/50 transition-all duration-300 hover:scale-105">
@@ -97,7 +90,7 @@ export default function HomePage() {
           </div>
 
           {/* CTA Buttons */}
-          <div className={`flex flex-col sm:flex-row gap-6 justify-center items-center mt-16 transition-all duration-1000 delay-700 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mt-16">
 
             {/* Sign Up Button */}
             <Link href="/signup">
@@ -120,7 +113,7 @@ export default function HomePage() {
           </div>
 
           {/* Stats Section */}
-          <div className={`grid grid-cols-3 gap-8 mt-20 pt-12 border-t border-purple-500/20 transition-all duration-1000 delay-900 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+          <div className="grid grid-cols-3 gap-8 mt-20 pt-12 border-t border-purple-500/20">
             <div className="text-center">
               <div className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
                 10K+
@@ -142,63 +135,6 @@ export default function HomePage() {
           </div>
         </div>
       </div>
-
-      {/* Floating Particles Effect */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(20)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-1 h-1 bg-purple-400/30 rounded-full animate-float"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 5}s`,
-              animationDuration: `${5 + Math.random() * 10}s`,
-            }}
-          />
-        ))}
-      </div>
-
-      <style jsx>{`
-        @keyframes gradient-x {
-          0%, 100% {
-            background-position: 0% 50%;
-          }
-          50% {
-            background-position: 100% 50%;
-          }
-        }
-
-        @keyframes float {
-          0%, 100% {
-            transform: translateY(0) translateX(0);
-            opacity: 0;
-          }
-          10% {
-            opacity: 1;
-          }
-          90% {
-            opacity: 1;
-          }
-          100% {
-            transform: translateY(-100vh) translateX(50px);
-            opacity: 0;
-          }
-        }
-
-        .animate-gradient-x {
-          background-size: 200% 200%;
-          animation: gradient-x 3s ease infinite;
-        }
-
-        .animate-float {
-          animation: float linear infinite;
-        }
-
-        .delay-1000 {
-          animation-delay: 1s;
-        }
-      `}</style>
     </div>
   );
 }
