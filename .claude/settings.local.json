@@ -160,7 +160,15 @@
       "Bash(find . -name \"*.py\" -type f -exec grep -l \"Kiro Gateway\" {} ;)",
       "Bash(exit 0)",
       "Bash(del:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(npm run build)",
+      "Bash(tee:*)",
+      "Bash(npx next build --debug)",
+      "Bash(npx next lint)",
+      "Bash(npx tsc:*)",
+      "Bash(git add:*)",
+      "Bash(git push:*)",
+      "Bash(git pull:*)"
     ]
   }
 }
