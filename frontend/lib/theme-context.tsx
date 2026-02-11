@@ -41,11 +41,15 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') as Theme | null;
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
 
-    if (savedTheme) {
-      setTheme(savedTheme);
+    setThemeState(initialTheme);
+
+    // Update document class
+    if (initialTheme === 'dark') {
+      document.documentElement.classList.add('dark');
     } else {
-      setTheme(prefersDark ? 'dark' : 'light');
+      document.documentElement.classList.add('light');
     }
   }, []);
 
