@@ -11,6 +11,9 @@ import { Todo } from '@/types/todo';
 import { useRouter } from 'next/navigation';
 import { useActivity } from '@/lib/activity-context';
 
+// Force dynamic rendering to prevent static generation issues with context
+export const dynamic = 'force-dynamic';
+
 export default function TasksPage() {
   const router = useRouter();
   const { logActivity } = useActivity();

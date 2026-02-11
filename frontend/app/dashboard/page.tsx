@@ -6,6 +6,9 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useActivity } from '@/lib/activity-context';
 
+// Force dynamic rendering to prevent static generation issues with context
+export const dynamic = 'force-dynamic';
+
 export default function DashboardPage() {
   const { user, isLoading, signOut } = useAuth();
   const { activities } = useActivity();

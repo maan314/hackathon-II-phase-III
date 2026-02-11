@@ -9,6 +9,9 @@ import { Input } from '@/components/ui/input';
 import { ChatMessage } from '@/components/ui/chat-message';
 import Link from 'next/link';
 
+// Force dynamic rendering to prevent static generation issues with context
+export const dynamic = 'force-dynamic';
+
 interface Message {
   id: string;
   role: 'user' | 'assistant';

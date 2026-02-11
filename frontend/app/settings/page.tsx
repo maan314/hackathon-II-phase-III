@@ -6,6 +6,9 @@ import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { useTheme } from '@/lib/theme-context';
 
+// Force dynamic rendering to prevent static generation issues with context
+export const dynamic = 'force-dynamic';
+
 export default function SettingsPage() {
   const { user, isLoading, signOut } = useAuth();
   const { theme, toggleTheme } = useTheme();

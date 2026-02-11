@@ -4,6 +4,9 @@ import { useAuth } from '@/lib/auth-context';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 
+// Force dynamic rendering to prevent static generation issues with context
+export const dynamic = 'force-dynamic';
+
 export default function ProfilePage() {
   const { user, isLoading, signOut } = useAuth();
   const router = useRouter();
