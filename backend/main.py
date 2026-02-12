@@ -22,7 +22,7 @@ app = FastAPI(title="Todo API with AI Chat Agent", version="1.0.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://hackathon-ii-phase-ii-todo.vercel.app",
+        "https://hackathon-ii-phase-iii-nine.vercel.app/",
         "http://localhost:3000",
         "http://localhost:3001",
         "http://localhost:3002",
