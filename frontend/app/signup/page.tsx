@@ -10,11 +10,7 @@ export default function SignUpPage() {
   const [error, setError] = useState<string | null>(null);
 
   const handleSignUpSuccess = () => {
-    // Show success message and redirect to sign in after a delay
-    alert('Account created successfully! Redirecting to sign in...');
-    setTimeout(() => {
-      router.push('/signin');
-    }, 1500);
+    router.push('/signin');
   };
 
   const handleSignUpError = (errorMessage: string) => {

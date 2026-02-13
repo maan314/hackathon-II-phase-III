@@ -1,11 +1,10 @@
 import axios from 'axios';
 
 // Use environment variable for API URL (defaults to localhost for development)
-const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const baseURL = process.env.NEXT_PUBLIC_API_URL || 'https://maan143-hackathon-ii-phase-ii-backend.hf.space';
 
 const apiClient = axios.create({
   baseURL,
-  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -41,8 +40,8 @@ apiClient.interceptors.response.use(
 export default apiClient;
 
 export const api = {
-  get: <T>(url: string, config?: any) => apiClient.get<T>(url + '/', config),  // Add trailing slash
-  post: <T>(url: string, data?: any, config?: any) => apiClient.post<T>(url + '/', data, config),  // Add trailing slash
+  get: <T>(url: string, config?: any) => apiClient.get<T>(url, config),
+  post: <T>(url: string, data?: any, config?: any) => apiClient.post<T>(url, data, config),
   put: <T>(url: string, data?: any, config?: any) => apiClient.put<T>(url, data, config),  // No change for /{id} routes
   delete: <T>(url: string, config?: any) => apiClient.delete<T>(url, config),  // No change for /{id} routes
   patch: <T>(url: string, data?: any, config?: any) => apiClient.patch<T>(url, data, config),
