@@ -6,6 +6,9 @@ import { ActivityProvider } from '@/lib/activity-context';
 export const metadata = {
   title: 'Todo Management App',
   description: 'Manage your tasks efficiently with our intuitive todo application',
+  icons: {
+    icon: '/icon.svg',
+  },
 }
 
 export default function RootLayout({
