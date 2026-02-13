@@ -32,10 +32,16 @@ export default function ChatPage() {
   const [isSending, setIsSending] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
+
+  // Auto-focus input on mount
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
 
   useEffect(() => {
     scrollToBottom();
@@ -176,6 +182,7 @@ export default function ChatPage() {
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsSending(false);
+      inputRef.current?.focus();
     }
   };
 
@@ -279,11 +286,13 @@ export default function ChatPage() {
 
         <div className="flex items-center space-x-4">
           <Input
+            ref={inputRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="Type your message... (Press Enter to send)"
             disabled={isSending}
+            autoFocus
             className="flex-1 bg-gray-800 border-purple-500/30 text-white placeholder-gray-500 focus:border-cyan-500 focus:ring-cyan-500"
           />
           <Button
