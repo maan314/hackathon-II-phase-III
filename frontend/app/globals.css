@@ -255,3 +255,8 @@ body {
 .light .from-red-900\/10 {
   --tw-gradient-from: rgba(239, 68, 68, 0.05) !important;
 }
+
+/* Footer in light mode */
+.light .border-gray-800 {
+  border-color: #e2e8f0 !important;
+}
