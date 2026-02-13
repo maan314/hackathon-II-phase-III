@@ -87,7 +87,7 @@ export default function TasksPage() {
 
     try {
       const response = await api.put<Todo>(`/todos/${id}`, {
-        is_completed: newStatus
+        status: newStatus ? 'completed' : 'pending'
       });
 
       // Update with server response to ensure sync
@@ -158,8 +158,7 @@ export default function TasksPage() {
       const response = await api.put<Todo>(`/todos/${id}`, {
         title: editForm.title,
         description: editForm.description,
-        due_date: editForm.due_date || null,
-        is_completed: editingTodo?.is_completed || false
+        due_date: editForm.due_date || null
       });
 
       setTodos(prevTodos => prevTodos.map(todo =>
