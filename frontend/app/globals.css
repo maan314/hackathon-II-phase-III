@@ -111,3 +111,147 @@ body {
               0 0 16px rgba(var(--neon-green), 0.3),
               0 0 24px rgba(var(--neon-green), 0.2);
 }
+
+/* ========== Light Theme Overrides ========== */
+/* Override hardcoded dark backgrounds when light theme is active */
+.light .bg-black,
+.light .bg-gradient-to-br.from-gray-900,
+.light .from-gray-900 {
+  --tw-gradient-from: #f0f9ff !important;
+  --tw-gradient-to: #ffffff !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+  background-color: #f8fafc !important;
+}
+
+.light .via-gray-800 {
+  --tw-gradient-via: #e0e7ff !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-via), var(--tw-gradient-to) !important;
+}
+
+.light .to-black {
+  --tw-gradient-to: #ffffff !important;
+}
+
+/* Text colors */
+.light .text-white {
+  color: #1e293b !important;
+}
+
+.light .text-gray-400 {
+  color: #64748b !important;
+}
+
+.light .text-gray-300 {
+  color: #475569 !important;
+}
+
+.light .text-gray-500 {
+  color: #64748b !important;
+}
+
+/* Card backgrounds */
+.light .from-gray-800\/50,
+.light .bg-gray-800\/50 {
+  --tw-gradient-from: rgba(255, 255, 255, 0.8) !important;
+  background-color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.light .to-gray-900\/50 {
+  --tw-gradient-to: rgba(245, 245, 247, 0.8) !important;
+}
+
+.light .from-gray-800\/30,
+.light .bg-gray-800\/30 {
+  --tw-gradient-from: rgba(255, 255, 255, 0.6) !important;
+  background-color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.light .to-gray-900\/30 {
+  --tw-gradient-to: rgba(245, 245, 247, 0.6) !important;
+}
+
+.light .bg-gray-800 {
+  background-color: #f1f5f9 !important;
+}
+
+/* Input fields */
+.light .bg-gray-700\/50 {
+  background-color: rgba(241, 245, 249, 0.8) !important;
+}
+
+.light .border-gray-600 {
+  border-color: #cbd5e1 !important;
+}
+
+.light .border-gray-700 {
+  border-color: #e2e8f0 !important;
+}
+
+.light .placeholder-gray-400::placeholder,
+.light .placeholder\:text-gray-400::placeholder {
+  color: #94a3b8 !important;
+}
+
+.light .placeholder-gray-500::placeholder,
+.light .placeholder\:text-gray-500::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* Hover states for cards */
+.light .hover\:bg-gray-800\/50:hover {
+  background-color: rgba(241, 245, 249, 0.9) !important;
+}
+
+/* Borders on cards */
+.light .border-cyan-500\/20,
+.light .border-cyan-500\/30 {
+  border-color: rgba(6, 182, 212, 0.3) !important;
+}
+
+.light .border-purple-500\/30 {
+  border-color: rgba(168, 85, 247, 0.3) !important;
+}
+
+.light .border-pink-500\/30 {
+  border-color: rgba(236, 72, 153, 0.3) !important;
+}
+
+.light .border-green-500\/30 {
+  border-color: rgba(34, 197, 94, 0.3) !important;
+}
+
+/* Shadows - softer in light mode */
+.light .shadow-cyan-500\/10,
+.light .shadow-cyan-500\/20 {
+  --tw-shadow-color: rgba(6, 182, 212, 0.08) !important;
+}
+
+.light .shadow-purple-500\/10,
+.light .shadow-purple-500\/20 {
+  --tw-shadow-color: rgba(168, 85, 247, 0.08) !important;
+}
+
+/* Landing page specific */
+.light .from-purple-900\/20 {
+  --tw-gradient-from: rgba(168, 85, 247, 0.05) !important;
+}
+
+.light .to-cyan-900\/20 {
+  --tw-gradient-to: rgba(6, 182, 212, 0.05) !important;
+}
+
+/* Gradient text stays vibrant in both modes */
+.light .bg-clip-text {
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+}
+
+/* Completed task styles in light mode */
+.light .line-through.text-gray-500 {
+  color: #94a3b8 !important;
+}
+
+/* Danger zone in settings */
+.light .from-red-900\/10 {
+  --tw-gradient-from: rgba(239, 68, 68, 0.05) !important;
+}
