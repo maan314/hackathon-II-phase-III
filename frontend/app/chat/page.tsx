@@ -38,10 +38,12 @@ export default function ChatPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  // Auto-focus input on mount
+  // Auto-focus input on mount and after sending completes
   useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
+    if (!isSending) {
+      inputRef.current?.focus();
+    }
+  }, [isSending]);
 
   useEffect(() => {
     scrollToBottom();
@@ -182,7 +184,6 @@ export default function ChatPage() {
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsSending(false);
-      inputRef.current?.focus();
     }
   };
 
