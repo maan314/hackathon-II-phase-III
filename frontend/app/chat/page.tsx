@@ -69,7 +69,7 @@ export default function ChatPage() {
     setIsSending(true);
 
     try {
-      const chatApiUrl = process.env.NEXT_PUBLIC_CHAT_API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001';
+      const chatApiUrl = process.env.NEXT_PUBLIC_CHAT_API_URL || process.env.NEXT_PUBLIC_API_URL || 'https://maan143-hackathon-ii-phase-ii-backend.hf.space';
       const response = await fetch(`${chatApiUrl}/api/${user.id}/chat`, {
         method: 'POST',
         headers: {
