@@ -1,8 +1,19 @@
 'use client';
 
 import Link from 'next/link';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function HomePage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    if (token) {
+      router.replace('/dashboard');
+    }
+  }, [router]);
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-black">
       {/* Animated Background Gradient */}
