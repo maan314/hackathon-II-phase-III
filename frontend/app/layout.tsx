@@ -23,15 +23,6 @@ export default function RootLayout({
           <ThemeProvider>
             <AuthProvider>
               <main>{children}</main>
-              <footer className="w-full py-3 text-center text-xs text-gray-600 bg-transparent border-none">
-                <p>
-                  Created by{' '}
-                  <span className="bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent font-semibold">
-                    Muhammad Usman
-                  </span>
-                  {' '}&copy; 2026
-                </p>
-              </footer>
             </AuthProvider>
           </ThemeProvider>
         </ActivityProvider>

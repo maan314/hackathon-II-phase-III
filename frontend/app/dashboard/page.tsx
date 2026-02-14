@@ -898,6 +898,17 @@ export default function DashboardPage() {
               })}
             </div>
           )}
+
+          {/* Footer - merged transparently */}
+          <div className="mt-8 pb-2 text-center text-xs text-gray-600">
+            <p>
+              Created by{' '}
+              <span className="bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent font-semibold">
+                Muhammad Usman
+              </span>
+              {' '}&copy; 2026
+            </p>
+          </div>
         </main>
       </div>
     </div>
