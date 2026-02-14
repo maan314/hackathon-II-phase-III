@@ -295,11 +295,45 @@ body {
   color: #1e293b !important;
 }
 
-/* Scrollbar for sidebar in light mode */
+/* ========== Scrollbar Styling (Theme-aware) ========== */
+/* Dark mode scrollbar (default) */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.4);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.6);
+}
+
+/* Light mode scrollbar */
 .light ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: transparent;
 }
 
 .light ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: rgba(148, 163, 184, 0.5);
+  border-radius: 3px;
+}
+
+.light ::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.7);
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100, 116, 139, 0.4) transparent;
+}
+
+.light * {
+  scrollbar-color: rgba(148, 163, 184, 0.5) transparent;
 }

@@ -46,8 +46,8 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
 
     if (typeof window !== 'undefined') {
       const savedTheme = localStorage.getItem('theme') as Theme | null;
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+      // Default to dark theme when no saved preference
+      const initialTheme = savedTheme || 'dark';
 
       setThemeState(initialTheme);
 
